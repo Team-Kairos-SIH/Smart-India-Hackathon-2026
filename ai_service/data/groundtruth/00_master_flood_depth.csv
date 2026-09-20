@@ -1,0 +1,157 @@
+id,latitude,longitude,depth_cm,date,time,location_name,source,source_reference,original_value,unit,observation_type,verification_status,confidence,notes
+NRSC_001,,,137.16,2015-12-01,,Teynampet (Alamman Kovil Street),NRSC/ISRO report,Annexure 1,4.5,feet,field_survey,field-survey report; coordinates not provided in Annexure 1,high,Field survey data. Coordinates not provided in Annexure.
+NRSC_002,,,60.96,2015-12-02,,Arumbakkam (Post Office Street),NRSC/ISRO report,Annexure 1,2.0,feet,field_survey,field-survey report; coordinates not provided in Annexure 1,high,Field survey data. Coordinates not provided in Annexure.
+NRSC_003,,,137.16,2015-12-02,,Ashok Nagar (Taurus Apartments),NRSC/ISRO report,Annexure 1,4.5,feet,field_survey,field-survey report; coordinates not provided in Annexure 1,high,Field survey data. Coordinates not provided in Annexure.
+NRSC_004,,,365.76,2015-12-01,,Jafferkhanpet (Bridge),NRSC/ISRO report,Annexure 1,12.0,feet,field_survey,field-survey report; coordinates not provided in Annexure 1,high,Field survey data. Coordinates not provided in Annexure.
+NRSC_005,,,76.2,2015-12-01,,VGP Selvanagar Extn (Plot 79),NRSC/ISRO report,Annexure 1,2.5,feet,field_survey,field-survey report; coordinates not provided in Annexure 1,high,Field survey data. Coordinates not provided in Annexure.
+NRSC_006,,,137.16,2015-12-01,,"Anna Nagar (Venus Colony, Plot-1)",NRSC/ISRO report,Annexure 1,4.5,feet,field_survey,field-survey report; coordinates not provided in Annexure 1,high,Field survey data. Coordinates not provided in Annexure.
+NRSC_007,,,91.44,2015-12-01,,Annai Indranagar (Vanchinathan Street),NRSC/ISRO report,Annexure 1,3.0,feet,field_survey,field-survey report; coordinates not provided in Annexure 1,high,Field survey data. Coordinates not provided in Annexure.
+NRSC_008,,,91.44,2015-12-01,,Tharamani (Babynagar),NRSC/ISRO report,Annexure 1,3.0,feet,field_survey,field-survey report; coordinates not provided in Annexure 1,high,Field survey data. Coordinates not provided in Annexure.
+NRSC_009,,,30.48,2015-12-01,,Adyar (Antariksha Vihar),NRSC/ISRO report,Annexure 1,1.0,feet,field_survey,field-survey report; coordinates not provided in Annexure 1,high,Field survey data. Coordinates not provided in Annexure.
+NRSC_010,,,106.68,2015-12-01,,Nandanam (Turn Bulls Street),NRSC/ISRO report,Annexure 1,3.5,feet,field_survey,field-survey report; coordinates not provided in Annexure 1,high,Field survey data. Coordinates not provided in Annexure.
+NRSC_011,,,304.8,2015-12-02,,West Mambalam (Arangnathan Subway),NRSC/ISRO report,Annexure 1,10.0,feet,field_survey,field-survey report; coordinates not provided in Annexure 1,high,Field survey data. Coordinates not provided in Annexure.
+NRSC_012,,,30.48,2015-12-01,,Thousand Lights (Middle School),NRSC/ISRO report,Annexure 1,1.0,feet,field_survey,field-survey report; coordinates not provided in Annexure 1,high,Field survey data. Coordinates not provided in Annexure.
+NRSC_013,,,91.44,2015-12-01,,Thousand lights (Police Quarters),NRSC/ISRO report,Annexure 1,3.0,feet,field_survey,field-survey report; coordinates not provided in Annexure 1,high,Field survey data. Coordinates not provided in Annexure.
+NRSC_014,,,76.2,2015-12-01,,Choolaimedu,NRSC/ISRO report,Annexure 1,2.5,feet,field_survey,field-survey report; coordinates not provided in Annexure 1,high,Field survey data. Coordinates not provided in Annexure.
+NRSC_015,,,60.96,2015-12-01,,Anna Nagar (Shanti Colony),NRSC/ISRO report,Annexure 1,2.0,feet,field_survey,field-survey report; coordinates not provided in Annexure 1,high,Field survey data. Coordinates not provided in Annexure.
+NRSC_016,,,45.72,2015-12-01,,Thirumullaivoyal (KK Nagar),NRSC/ISRO report,Annexure 1,1.5,feet,field_survey,field-survey report; coordinates not provided in Annexure 1,high,Field survey data. Coordinates not provided in Annexure.
+NRSC_017,,,60.96,2015-12-03,,Sholinganallur (Anna Street),NRSC/ISRO report,Annexure 1,2.0,feet,field_survey,field-survey report; coordinates not provided in Annexure 1,high,Field survey data. Coordinates not provided in Annexure.
+NRSC_018,,,45.72,2015-12-02,,Vyasarpadi,NRSC/ISRO report,Annexure 1,1.5,feet,field_survey,field-survey report; coordinates not provided in Annexure 1,high,Field survey data. Coordinates not provided in Annexure.
+NRSC_019,,,106.68,2015-12-03,,Thoraipakkam (Vinay Nagar),NRSC/ISRO report,Annexure 1,3.5,feet,field_survey,field-survey report; coordinates not provided in Annexure 1,high,Field survey data. Coordinates not provided in Annexure.
+NRSC_020,,,60.96,2015-12-03,,Sholinganallur (Sacred Heart School),NRSC/ISRO report,Annexure 1,2.0,feet,field_survey,field-survey report; coordinates not provided in Annexure 1,high,Field survey data. Coordinates not provided in Annexure.
+NRSC_021,,,182.88,2015-11-16,,OMR Rajiv Gandhi Salai (Satyabhama University),NRSC/ISRO report,Annexure 1,6.0,feet,field_survey,field-survey report; coordinates not provided in Annexure 1,high,Field survey data. Coordinates not provided in Annexure.
+NRSC_022,,,182.88,2015-11-16,,OMR Road,NRSC/ISRO report,Annexure 1,6.0,feet,field_survey,field-survey report; coordinates not provided in Annexure 1,high,Field survey data. Coordinates not provided in Annexure.
+NRSC_023,,,100.584,2015-12-01,,Mambakkam,NRSC/ISRO report,Annexure 1,3.3,feet,field_survey,field-survey report; coordinates not provided in Annexure 1,high,Field survey data. Coordinates not provided in Annexure.
+NRSC_024,,,167.64,2015-12-02,,Ekkaduthangal (Jawahar Nehru Street),NRSC/ISRO report,Annexure 1,5.5,feet,field_survey,field-survey report; coordinates not provided in Annexure 1,high,Field survey data. Coordinates not provided in Annexure.
+NRSC_025,,,213.36,2015-12-03,,Samayapurathu Mariamman,NRSC/ISRO report,Annexure 1,7.0,feet,field_survey,field-survey report; coordinates not provided in Annexure 1,high,Field survey data. Coordinates not provided in Annexure.
+NRSC_026,,,198.12,2015-12-01,,Saidapet (Salavaiyalar Colony),NRSC/ISRO report,Annexure 1,6.5,feet,field_survey,field-survey report; coordinates not provided in Annexure 1,high,Field survey data. Coordinates not provided in Annexure.
+NRSC_027,,,320.04,2015-12-01,,Kotturpuram (Muthumariamna Kovil Street),NRSC/ISRO report,Annexure 1,10.5,feet,field_survey,field-survey report; coordinates not provided in Annexure 1,high,Field survey data. Coordinates not provided in Annexure.
+NRSC_028,,,30.48,2015-12-01,,Valsaravakkam (Kamraj Street),NRSC/ISRO report,Annexure 1,1.0,feet,field_survey,field-survey report; coordinates not provided in Annexure 1,high,Field survey data. Coordinates not provided in Annexure.
+NRSC_029,,,350.52,2015-12-01,,Manapakkam (SRCM Hqtrs),NRSC/ISRO report,Annexure 1,11.5,feet,field_survey,field-survey report; coordinates not provided in Annexure 1,high,Field survey data. Coordinates not provided in Annexure.
+NRSC_030,,,106.68,2015-12-01,,Chrompet (Radha Nagar),NRSC/ISRO report,Annexure 1,3.5,feet,field_survey,field-survey report; coordinates not provided in Annexure 1,high,Field survey data. Coordinates not provided in Annexure.
+NRSC_031,,,182.88,2015-12-01,,Vardharajapuram (Krishna Nagar),NRSC/ISRO report,Annexure 1,6.0,feet,field_survey,field-survey report; coordinates not provided in Annexure 1,high,Field survey data. Coordinates not provided in Annexure.
+NRSC_032,,,137.16,2015-12-01,,Anna Nagar (Venus Colony Plot 30),NRSC/ISRO report,Annexure 1,4.5,feet,field_survey,field-survey report; coordinates not provided in Annexure 1,high,Field survey data. Coordinates not provided in Annexure.
+NRSC_033,,,76.2,2015-12-01,,Tharamani (Bharathi Nagar),NRSC/ISRO report,Annexure 1,2.5,feet,field_survey,field-survey report; coordinates not provided in Annexure 1,high,Field survey data. Coordinates not provided in Annexure.
+NRSC_034,,,167.64,2015-12-01,,T Nagar (Thomas Road),NRSC/ISRO report,Annexure 1,5.5,feet,field_survey,field-survey report; coordinates not provided in Annexure 1,high,Field survey data. Coordinates not provided in Annexure.
+NRSC_035,,,76.2,2015-12-01,,Vandalur (Mooggambigai Koil Street),NRSC/ISRO report,Annexure 1,2.5,feet,field_survey,field-survey report; coordinates not provided in Annexure 1,high,Field survey data. Coordinates not provided in Annexure.
+NRSC_036,,,167.64,2015-12-01,,Mudichur,NRSC/ISRO report,Annexure 1,5.5,feet,field_survey,field-survey report; coordinates not provided in Annexure 1,high,Field survey data. Coordinates not provided in Annexure.
+NRSC_037,,,30.48,2015-12-01,,Mannivakalam,NRSC/ISRO report,Annexure 1,1.0,feet,field_survey,field-survey report; coordinates not provided in Annexure 1,high,Field survey data. Coordinates not provided in Annexure.
+NRSC_038,,,213.36,2015-12-01,,Echankadu (Anna Nagar),NRSC/ISRO report,Annexure 1,7.0,feet,field_survey,field-survey report; coordinates not provided in Annexure 1,high,Field survey data. Coordinates not provided in Annexure.
+NRSC_039,,,152.4,2015-12-02,,Thandalam,NRSC/ISRO report,Annexure 1,5.0,feet,field_survey,field-survey report; coordinates not provided in Annexure 1,high,Field survey data. Coordinates not provided in Annexure.
+NRSC_040,,,76.2,2015-12-02,,Sithalapakkam (Skylar Avenue),NRSC/ISRO report,Annexure 1,2.5,feet,field_survey,field-survey report; coordinates not provided in Annexure 1,high,Field survey data. Coordinates not provided in Annexure.
+NRSC_041,,,609.6,2015-12-01,,Sikkarayapuram (Madha Engg College),NRSC/ISRO report,Annexure 1,20.0,feet,field_survey,field-survey report; coordinates not provided in Annexure 1,high,Field survey data. Coordinates not provided in Annexure.
+NRSC_042,,,365.76,2015-12-01,,Sirukulathur,NRSC/ISRO report,Annexure 1,12.0,feet,field_survey,field-survey report; coordinates not provided in Annexure 1,high,Field survey data. Coordinates not provided in Annexure.
+NRSC_043,,,30.48,2015-12-01,,Kundrathur,NRSC/ISRO report,Annexure 1,1.0,feet,field_survey,field-survey report; coordinates not provided in Annexure 1,high,Field survey data. Coordinates not provided in Annexure.
+NRSC_044,,,60.96,2015-12-01,,Pallavaram (ISRO Guest House),NRSC/ISRO report,Annexure 1,2.0,feet,field_survey,field-survey report; coordinates not provided in Annexure 1,high,Field survey data. Coordinates not provided in Annexure.
+NRSC_045,,,30.48,2015-12-01,,Madipakkam (Sabari Salai),NRSC/ISRO report,Annexure 1,1.0,feet,field_survey,field-survey report; coordinates not provided in Annexure 1,high,Field survey data. Coordinates not provided in Annexure.
+NRSC_046,,,45.72,2015-12-01,,Ambattor (Sivananda Nagar),NRSC/ISRO report,Annexure 1,1.5,feet,field_survey,field-survey report; coordinates not provided in Annexure 1,high,Field survey data. Coordinates not provided in Annexure.
+NRSC_047,,,60.96,2015-12-01,,Avadi (TNHB Road),NRSC/ISRO report,Annexure 1,2.0,feet,field_survey,field-survey report; coordinates not provided in Annexure 1,high,Field survey data. Coordinates not provided in Annexure.
+NRSC_048,,,30.48,2015-12-01,,Erukkancheri (AP Arasu Street),NRSC/ISRO report,Annexure 1,1.0,feet,field_survey,field-survey report; coordinates not provided in Annexure 1,high,Field survey data. Coordinates not provided in Annexure.
+NRSC_049,,,76.2,2015-12-01,,Pattabhiram (Hindu College),NRSC/ISRO report,Annexure 1,2.5,feet,field_survey,field-survey report; coordinates not provided in Annexure 1,high,Field survey data. Coordinates not provided in Annexure.
+NRSC_050,,,76.2,2015-11-10,,Puzhal (GNT Road),NRSC/ISRO report,Annexure 1,2.5,feet,field_survey,field-survey report; coordinates not provided in Annexure 1,high,Field survey data. Coordinates not provided in Annexure.
+NRSC_051,,,76.2,2015-12-02,,Alandur (VOC Nagar Street),NRSC/ISRO report,Annexure 1,2.5,feet,field_survey,field-survey report; coordinates not provided in Annexure 1,high,Field survey data. Coordinates not provided in Annexure.
+NRSC_052,,,121.92,2015-11-10,,Redhills,NRSC/ISRO report,Annexure 1,4.0,feet,field_survey,field-survey report; coordinates not provided in Annexure 1,high,Field survey data. Coordinates not provided in Annexure.
+NRSC_053,,,60.96,2015-11-10,,Gandhi Nagar,NRSC/ISRO report,Annexure 1,2.0,feet,field_survey,field-survey report; coordinates not provided in Annexure 1,high,Field survey data. Coordinates not provided in Annexure.
+ACAD_001,,,,2015-12-01,,,Social-media paper,40677_2021_195_MOESM2_ESM,,meters,social_media_derived,,medium,
+ACAD_002,12.994744,80.167777,100.0,2015-12-01,,,Social-media paper,40677_2021_195_MOESM2_ESM,1,meters,social_media_derived,,medium,
+ACAD_003,13.033422,80.25203,15.0,2015-12-01,,,Social-media paper,40677_2021_195_MOESM2_ESM,0.15,meters,social_media_derived,,medium,
+ACAD_004,13.018124,80.2608709999999,315.0,2015-12-01,,,Social-media paper,40677_2021_195_MOESM2_ESM,3.15,meters,social_media_derived,,medium,
+ACAD_005,13.016107,80.2595299999999,300.0,2015-12-01,,,Social-media paper,40677_2021_195_MOESM2_ESM,3,meters,social_media_derived,,medium,
+ACAD_006,13.076912,80.216199,122.0,2015-12-01,,,Social-media paper,40677_2021_195_MOESM2_ESM,1.22,meters,social_media_derived,,medium,
+ACAD_007,13.068471,80.2124079999999,61.0,2015-12-01,,,Social-media paper,40677_2021_195_MOESM2_ESM,0.61,meters,social_media_derived,,medium,
+ACAD_008,13.0320269999999,80.212591,229.99999999999997,2015-12-01,,,Social-media paper,40677_2021_195_MOESM2_ESM,2.3,meters,social_media_derived,,medium,
+ACAD_009,13.029757,80.210046,210.0,2015-12-01,,,Social-media paper,40677_2021_195_MOESM2_ESM,2.1,meters,social_media_derived,,medium,
+ACAD_010,13.031901,80.2166249999999,450.0,2015-12-01,,,Social-media paper,40677_2021_195_MOESM2_ESM,4.5,meters,social_media_derived,,medium,
+ACAD_011,13.034738,80.2121829999999,229.99999999999997,2015-12-01,,,Social-media paper,40677_2021_195_MOESM2_ESM,2.3,meters,social_media_derived,,medium,
+ACAD_012,13.112455,80.096085,0.0,2015-12-01,,,Social-media paper,40677_2021_195_MOESM2_ESM,0,meters,social_media_derived,,medium,
+ACAD_013,13.002993,80.2723699999999,0.0,2015-12-01,,,Social-media paper,40677_2021_195_MOESM2_ESM,0,meters,social_media_derived,,medium,
+ACAD_014,13.079984,80.267875,0.0,2015-12-01,,,Social-media paper,40677_2021_195_MOESM2_ESM,0,meters,social_media_derived,,medium,
+ACAD_015,13.077479,80.2386039999999,0.0,2015-12-01,,,Social-media paper,40677_2021_195_MOESM2_ESM,0,meters,social_media_derived,,medium,
+ACAD_016,13.078901,80.225161,0.0,2015-12-01,,,Social-media paper,40677_2021_195_MOESM2_ESM,0,meters,social_media_derived,,medium,
+ACAD_017,13.084731,80.218664,0.0,2015-12-01,,,Social-media paper,40677_2021_195_MOESM2_ESM,0,meters,social_media_derived,,medium,
+ACAD_018,13.085307,80.201279,0.0,2015-12-01,,,Social-media paper,40677_2021_195_MOESM2_ESM,0,meters,social_media_derived,,medium,
+ACAD_019,13.08283,80.1983929999999,0.0,2015-12-01,,,Social-media paper,40677_2021_195_MOESM2_ESM,0,meters,social_media_derived,,medium,
+ACAD_020,13.075153,80.194856,0.0,2015-12-01,,,Social-media paper,40677_2021_195_MOESM2_ESM,0,meters,social_media_derived,,medium,
+ACAD_021,12.92703,80.126479,0.0,2015-12-01,,,Social-media paper,40677_2021_195_MOESM2_ESM,0,meters,social_media_derived,,medium,
+ACAD_022,12.9230149999999,80.123255,0.0,2015-12-01,,,Social-media paper,40677_2021_195_MOESM2_ESM,0,meters,social_media_derived,,medium,
+ACAD_023,13.067976,80.2587979999999,60.0,2015-12-01,,,Social-media paper,40677_2021_195_MOESM2_ESM,0.6,meters,social_media_derived,,medium,
+ACAD_024,13.018636,80.2595069999999,229.0,2015-12-01,,,Social-media paper,40677_2021_195_MOESM2_ESM,2.29,meters,social_media_derived,,medium,
+ACAD_025,13.007311,80.203894,190.0,2015-12-01,,,Social-media paper,40677_2021_195_MOESM2_ESM,1.9,meters,social_media_derived,,medium,
+ACAD_026,13.027415,80.214123,609.0,2015-12-01,,,Social-media paper,40677_2021_195_MOESM2_ESM,6.09,meters,social_media_derived,,medium,
+ACAD_027,13.0540749999999,80.225937,0.0,2015-12-01,,,Social-media paper,40677_2021_195_MOESM2_ESM,0,meters,social_media_derived,,medium,
+ACAD_028,13.019102,80.2410009999999,335.0,2015-12-01,,,Social-media paper,40677_2021_195_MOESM2_ESM,3.35,meters,social_media_derived,,medium,
+ACAD_029,13.015632,80.2400559999999,300.0,2015-12-01,,,Social-media paper,40677_2021_195_MOESM2_ESM,3,meters,social_media_derived,,medium,
+ACAD_030,13.063946,80.168073,0.0,2015-12-01,,,Social-media paper,40677_2021_195_MOESM2_ESM,0,meters,social_media_derived,,medium,
+ACAD_031,13.074146,80.192052,0.0,2015-12-01,,,Social-media paper,40677_2021_195_MOESM2_ESM,0,meters,social_media_derived,,medium,
+ACAD_032,13.067545,80.176421,0.0,2015-12-01,,,Social-media paper,40677_2021_195_MOESM2_ESM,0,meters,social_media_derived,,medium,
+ACAD_033,13.061285,80.161197,0.0,2015-12-01,,,Social-media paper,40677_2021_195_MOESM2_ESM,0,meters,social_media_derived,,medium,
+ACAD_034,13.061441,80.1515129999999,0.0,2015-12-01,,,Social-media paper,40677_2021_195_MOESM2_ESM,0,meters,social_media_derived,,medium,
+ACAD_035,13.055296,80.1257339999999,0.0,2015-12-01,,,Social-media paper,40677_2021_195_MOESM2_ESM,0,meters,social_media_derived,,medium,
+ACAD_036,13.0565289999999,80.0977639999999,0.0,2015-12-01,,,Social-media paper,40677_2021_195_MOESM2_ESM,0,meters,social_media_derived,,medium,
+ACAD_037,13.0483449999999,80.0835909999999,0.0,2015-12-01,,,Social-media paper,40677_2021_195_MOESM2_ESM,0,meters,social_media_derived,,medium,
+ACAD_038,13.015787,80.2266439999999,213.0,2015-12-01,,,Social-media paper,40677_2021_195_MOESM2_ESM,2.13,meters,social_media_derived,,medium,
+ACAD_039,12.9673099999999,80.195846,90.0,2015-12-01,,,Social-media paper,40677_2021_195_MOESM2_ESM,0.9,meters,social_media_derived,,medium,
+ACAD_040,13.0187399999999,80.178083,335.0,2015-12-01,,,Social-media paper,40677_2021_195_MOESM2_ESM,3.35,meters,social_media_derived,,medium,
+ACAD_041,13.0247899999999,80.109031,0.0,2015-12-01,,,Social-media paper,40677_2021_195_MOESM2_ESM,0,meters,social_media_derived,,medium,
+ACAD_042,12.998927,80.19194,250.0,2015-12-01,,,Social-media paper,40677_2021_195_MOESM2_ESM,2.5,meters,social_media_derived,,medium,
+ACAD_043,13.0790609999999,80.205459,213.0,2015-12-01,,,Social-media paper,40677_2021_195_MOESM2_ESM,2.13,meters,social_media_derived,,medium,
+ACAD_044,12.922606,80.09586,122.0,2015-12-01,,,Social-media paper,40677_2021_195_MOESM2_ESM,1.22,meters,social_media_derived,,medium,
+ACAD_045,13.0381699999999,80.26739,15.0,2015-12-01,,,Social-media paper,40677_2021_195_MOESM2_ESM,0.15,meters,social_media_derived,,medium,
+ACAD_046,13.02814,80.2354689999999,60.0,2015-12-01,,,Social-media paper,40677_2021_195_MOESM2_ESM,0.6,meters,social_media_derived,,medium,
+ACAD_047,12.972687,80.191298,0.0,2015-12-01,,,Social-media paper,40677_2021_195_MOESM2_ESM,0,meters,social_media_derived,,medium,
+ACAD_048,12.94903,80.254632,0.0,2015-12-01,,,Social-media paper,40677_2021_195_MOESM2_ESM,0,meters,social_media_derived,,medium,
+ACAD_049,12.92087,80.0881009999999,335.0,2015-12-01,,,Social-media paper,40677_2021_195_MOESM2_ESM,3.35,meters,social_media_derived,,medium,
+ACAD_050,12.90755,80.206997,229.99999999999997,2015-12-01,,,Social-media paper,40677_2021_195_MOESM2_ESM,2.3,meters,social_media_derived,,medium,
+ACAD_051,13.044942,80.149381,25.0,2015-12-01,,,Social-media paper,40677_2021_195_MOESM2_ESM,0.25,meters,social_media_derived,,medium,
+ACAD_052,13.089563,80.2535479999999,0.0,2015-12-01,,,Social-media paper,40677_2021_195_MOESM2_ESM,0,meters,social_media_derived,,medium,
+ACAD_053,13.0184409999999,80.2251839999999,198.0,2015-12-01,,,Social-media paper,40677_2021_195_MOESM2_ESM,1.98,meters,social_media_derived,,medium,
+ACAD_054,13.027009,80.22472,210.0,2015-12-01,,,Social-media paper,40677_2021_195_MOESM2_ESM,2.1,meters,social_media_derived,,medium,
+ACAD_055,13.019266,80.21729,214.0,2015-12-01,,,Social-media paper,40677_2021_195_MOESM2_ESM,2.14,meters,social_media_derived,,medium,
+ACAD_056,13.020152,80.21575,880.0000000000001,2015-12-01,,,Social-media paper,40677_2021_195_MOESM2_ESM,8.8,meters,social_media_derived,,medium,
+ACAD_057,12.922599,80.1478039999999,0.0,2015-12-01,,,Social-media paper,40677_2021_195_MOESM2_ESM,0,meters,social_media_derived,,medium,
+ACAD_058,12.993926,80.083329,600.0,2015-12-01,,,Social-media paper,40677_2021_195_MOESM2_ESM,6,meters,social_media_derived,,medium,
+ACAD_059,12.888176,80.18432,70.0,2015-12-01,,,Social-media paper,40677_2021_195_MOESM2_ESM,0.7,meters,social_media_derived,,medium,
+ACAD_060,13.051157,80.2376749999999,30.0,2015-12-01,,,Social-media paper,40677_2021_195_MOESM2_ESM,0.3,meters,social_media_derived,,medium,
+ACAD_061,13.052523,80.2339889999999,25.0,2015-12-01,,,Social-media paper,40677_2021_195_MOESM2_ESM,0.25,meters,social_media_derived,,medium,
+ACAD_062,12.926037,80.117855,50.0,2015-12-01,,,Social-media paper,40677_2021_195_MOESM2_ESM,0.5,meters,social_media_derived,,medium,
+ACAD_063,12.9405129999999,80.130931,60.0,2015-12-01,,,Social-media paper,40677_2021_195_MOESM2_ESM,0.6,meters,social_media_derived,,medium,
+ACAD_064,12.945129,80.13467,90.0,2015-12-01,,,Social-media paper,40677_2021_195_MOESM2_ESM,0.9,meters,social_media_derived,,medium,
+ACAD_065,12.991611,80.2443099999999,90.0,2015-12-01,,,Social-media paper,40677_2021_195_MOESM2_ESM,0.9,meters,social_media_derived,,medium,
+ACAD_066,13.042843,80.24764,150.0,2015-12-01,,,Social-media paper,40677_2021_195_MOESM2_ESM,1.5,meters,social_media_derived,,medium,
+ACAD_067,13.029915,80.016649,46.0,2015-12-01,,,Social-media paper,40677_2021_195_MOESM2_ESM,0.46,meters,social_media_derived,,medium,
+ACAD_068,12.939158,80.2354109999999,122.0,2015-12-01,,,Social-media paper,40677_2021_195_MOESM2_ESM,1.22,meters,social_media_derived,,medium,
+ACAD_069,12.9261079999999,80.234294,61.0,2015-12-01,,,Social-media paper,40677_2021_195_MOESM2_ESM,0.61,meters,social_media_derived,,medium,
+ACAD_070,12.866588,80.0751819999999,283.0,2015-12-01,,,Social-media paper,40677_2021_195_MOESM2_ESM,2.83,meters,social_media_derived,,medium,
+ACAD_071,12.867132,80.0735509999999,310.0,2015-12-01,,,Social-media paper,40677_2021_195_MOESM2_ESM,3.1,meters,social_media_derived,,medium,
+ACAD_072,13.050022,80.211922,190.0,2015-12-01,,,Social-media paper,40677_2021_195_MOESM2_ESM,1.9,meters,social_media_derived,,medium,
+ACAD_073,13.060949,80.2429429999999,0.0,2015-12-01,,,Social-media paper,40677_2021_195_MOESM2_ESM,0,meters,social_media_derived,,medium,
+ACAD_074,12.975075,80.262399,0.0,2015-12-01,,,Social-media paper,40677_2021_195_MOESM2_ESM,0,meters,social_media_derived,,medium,
+ACAD_075,12.891772,80.083454,90.0,2015-12-01,,,Social-media paper,40677_2021_195_MOESM2_ESM,0.9,meters,social_media_derived,,medium,
+ACAD_076,12.974643,80.2202539999999,70.0,2015-12-01,,,Social-media paper,40677_2021_195_MOESM2_ESM,0.7,meters,social_media_derived,,medium,
+ACAD_077,12.98259,80.2150429999999,80.0,2015-12-01,,,Social-media paper,40677_2021_195_MOESM2_ESM,0.8,meters,social_media_derived,,medium,
+ACAD_078,12.974392,80.228616,122.0,2015-12-01,,,Social-media paper,40677_2021_195_MOESM2_ESM,1.22,meters,social_media_derived,,medium,
+ACAD_079,13.0399999999999,80.2213399999999,240.0,2015-12-01,,,Social-media paper,40677_2021_195_MOESM2_ESM,2.4,meters,social_media_derived,,medium,
+ACAD_080,13.039733,80.2211559999999,237.0,2015-12-01,,,Social-media paper,40677_2021_195_MOESM2_ESM,2.37,meters,social_media_derived,,medium,
+ACAD_081,13.04265,80.222013,250.0,2015-12-01,,,Social-media paper,40677_2021_195_MOESM2_ESM,2.5,meters,social_media_derived,,medium,
+ACAD_082,13.038913,80.22104,300.0,2015-12-01,,,Social-media paper,40677_2021_195_MOESM2_ESM,3,meters,social_media_derived,,medium,
+ACAD_083,12.922321,80.093888,250.0,2015-12-01,,,Social-media paper,40677_2021_195_MOESM2_ESM,2.5,meters,social_media_derived,,medium,
+ACAD_084,13.100585,80.201158,250.0,2015-12-01,,,Social-media paper,40677_2021_195_MOESM2_ESM,2.5,meters,social_media_derived,,medium,
+ACAD_085,13.099629,80.20174,229.99999999999997,2015-12-01,,,Social-media paper,40677_2021_195_MOESM2_ESM,2.3,meters,social_media_derived,,medium,
+ACAD_086,13.099992,80.2029519999999,210.0,2015-12-01,,,Social-media paper,40677_2021_195_MOESM2_ESM,2.1,meters,social_media_derived,,medium,
+ACAD_087,13.117279,80.229467,315.0,2015-12-01,,,Social-media paper,40677_2021_195_MOESM2_ESM,3.15,meters,social_media_derived,,medium,
+ACAD_088,13.115776,80.232173,290.0,2015-12-01,,,Social-media paper,40677_2021_195_MOESM2_ESM,2.9,meters,social_media_derived,,medium,
+ACAD_089,13.066481,80.221607,215.0,2015-12-01,,,Social-media paper,40677_2021_195_MOESM2_ESM,2.15,meters,social_media_derived,,medium,
+ACAD_090,13.119263,80.196404,210.0,2015-12-01,,,Social-media paper,40677_2021_195_MOESM2_ESM,2.1,meters,social_media_derived,,medium,
+ACAD_091,13.0591349999999,80.2121669999999,210.0,2015-12-01,,,Social-media paper,40677_2021_195_MOESM2_ESM,2.1,meters,social_media_derived,,medium,
+ACAD_092,13.01985,80.2062909999999,219.0,2015-12-01,,,Social-media paper,40677_2021_195_MOESM2_ESM,2.19,meters,social_media_derived,,medium,
+ACAD_093,13.152125,80.1959609999999,210.0,2015-12-01,,,Social-media paper,40677_2021_195_MOESM2_ESM,2.1,meters,social_media_derived,,medium,
+ACAD_094,13.1438919999999,80.1946839999999,190.0,2015-12-01,,,Social-media paper,40677_2021_195_MOESM2_ESM,1.9,meters,social_media_derived,,medium,
+ACAD_095,13.182888,80.205432,260.0,2015-12-01,,,Social-media paper,40677_2021_195_MOESM2_ESM,2.6,meters,social_media_derived,,medium,
+NEWS_001,,,121.92,2015-11-15/16,,"Aathma Nagar, Saidapet",The New Indian Express,About 150 Slum Dwellers Evacuated as Rain Wreaks Havoc in Aathma Nagar,4.0,feet,news_report,contemporary news report; resident account,medium,About 150 families evacuated; houses flooded/washed away.
+NEWS_002,,,91.44,2015-11-15/16,,Kulasekarapuram / Chinmaya Nagar,The New Indian Express,Chinmaya Nagar Resurfaces,3.0,feet,news_report,contemporary news report; resident account,medium,"Homes flooded; vehicles, electronics and clothes damaged."
+NEWS_003,,,243.84,2015-12-01/02,,Chennai (specific locality not given in article),Deccan Chronicle,Chennai floods: Navy throws a lifeline; brings 3 ships and 300 tonnes of food,8.0,feet,news_report,contemporary news report; area-level depth,medium,Residents stranded; electricity and basic supplies disrupted; rescue operations underway.
+NEWS_004,,,152.4,2015-12-01/02,,Thiruverkadu (Karunai Illam),Times of India,"400 mentally ill, elderly stranded in Thiruverkadu",5.0,feet,news_report,contemporary news report,medium,Around 400 psychiatric patients and elderly stranded; belongings washed away.
+NEWS_005,,,60.96,2015-12-01/02,,"Velachery, Balamurugan Nagar",The New Indian Express,Chennai’s December Deluge — a year later: are prepared enough? (resident retrospective),2.0,feet,news_report,retrospective news report; resident account,medium,Shop and apartment flooded; stock damaged; family moved to first floor.
+NEWS_006,,,121.92,2015-12-01/02,,Hamlets/areas adjoining Chembarambakkam reservoir,Times of India,Most reservoirs around Chennai wreaked damage,4.0,feet,news_report,contemporary news report; event-specific narrative,medium,A bank officer was swept away and died; flooding affected areas along the reservoir/outflow.
+UNCAT_001,,,540.0,2015-12-01,,Maraimalai Adigal bridge,water-12-02875.pdf,Page 11,5.4,meters,academic_paper_derived,,medium,Reported from secondary source [13] in paper
+UNCAT_002,,,900.0,2015-12-01,,Thiru vi ka bridge,water-12-02875.pdf,Page 11,9.0,meters,academic_paper_derived,,medium,Reported from secondary source [13] in paper

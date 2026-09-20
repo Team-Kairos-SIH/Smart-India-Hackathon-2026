@@ -8,21 +8,31 @@ and LULC / soil infiltration surface runoff generation.
 
 from typing import TYPE_CHECKING, Any
 
-from .dem_builder import (
-    DEFAULT_CHENNAI_BOUNDS_WGS84,
-    DEFAULT_PIXEL_RES_M,
-    DEFAULT_UTM_CRS,
-    DEMBuilder,
-)
-from .hydro_conditioner import HydroConditioner
-from .hydrologic_derivatives import HydrologicDerivatives
-from .road_sampler import RoadElevationSampler
 from .lulc import (
     ImperviousExtractor,
     SoilHydrologyModel,
     SurfaceRunoffGenerator,
     RunoffResult,
 )
+
+try:
+    from .dem_builder import (
+        DEFAULT_CHENNAI_BOUNDS_WGS84,
+        DEFAULT_PIXEL_RES_M,
+        DEFAULT_UTM_CRS,
+        DEMBuilder,
+    )
+    from .hydro_conditioner import HydroConditioner
+    from .hydrologic_derivatives import HydrologicDerivatives
+    from .road_sampler import RoadElevationSampler
+except (ImportError, OSError):
+    DEFAULT_CHENNAI_BOUNDS_WGS84 = (80.0, 12.8, 80.35, 13.3)
+    DEFAULT_UTM_CRS = "EPSG:32644"
+    DEFAULT_PIXEL_RES_M = 30.0
+    DEMBuilder = None
+    HydroConditioner = None
+    HydrologicDerivatives = None
+    RoadElevationSampler = None
 
 if TYPE_CHECKING:
     from .pipeline import Layer1Pipeline, Layer1Result

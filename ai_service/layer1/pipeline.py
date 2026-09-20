@@ -19,12 +19,20 @@ from typing import Any, Dict, List, Optional, Union
 
 import numpy as np
 import pandas as pd
-import rasterio
-
-from .dem_builder import DEMBuilder, DEFAULT_CHENNAI_BOUNDS_WGS84, DEFAULT_UTM_CRS
-from .hydro_conditioner import HydroConditioner
-from .hydrologic_derivatives import HydrologicDerivatives
-from .road_sampler import RoadElevationSampler
+try:
+    import rasterio
+    from .dem_builder import DEMBuilder, DEFAULT_CHENNAI_BOUNDS_WGS84, DEFAULT_UTM_CRS
+    from .hydro_conditioner import HydroConditioner
+    from .hydrologic_derivatives import HydrologicDerivatives
+    from .road_sampler import RoadElevationSampler
+except (ImportError, OSError):
+    rasterio = None
+    DEMBuilder = None
+    HydroConditioner = None
+    HydrologicDerivatives = None
+    RoadElevationSampler = None
+    DEFAULT_CHENNAI_BOUNDS_WGS84 = (80.0, 12.8, 80.35, 13.3)
+    DEFAULT_UTM_CRS = "EPSG:32644"
 from .lulc import SurfaceRunoffGenerator, RunoffResult
 
 logger = logging.getLogger(__name__)

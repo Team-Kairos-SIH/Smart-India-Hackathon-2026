@@ -83,24 +83,36 @@ class MassConservationConstraint:
         drained_rate_mm_hr: np.ndarray,
         subcatchment_areas_m2: np.ndarray,
         lead_time_min: int = 60,
-        infiltration_coeff: float = 0.10
+        infiltration_coeff: float = 0.10,
+        backflow_rate_m3_s: Optional[np.ndarray] = None
     ) -> Dict[str, Any]:
         """
-        Verifies mass conservation balance between rainfall, surface storage, pipe drainage, and infiltration.
+        Verifies mass conservation balance between rainfall, surface storage, pipe drainage, infiltration, and backflow.
 
         Parameters:
-          rain_rate_mm_hr: Vector of precipitation intensity I_i(t)
+          rain_rate_mm_hr: Vector of precipitation/runoff intensity I_i(t)
           water_depth_cm: Predicted street water depth vector d_i(t) in centimeters
           drained_rate_mm_hr: Effective underground conduit drainage rate
           subcatchment_areas_m2: Catchment area A_i per road segment
           lead_time_min: Storm duration horizon (minutes)
           infiltration_coeff: Initial soil/vegetation abstraction ratio (default 0.10)
+          backflow_rate_m3_s: Optional Layer 2 conduit backflow discharge vector [m3/s]
         """
         dt_hr = float(lead_time_min) / 60.0
+        dt_sec = dt_hr * 3600.0
         areas = subcatchment_areas_m2.astype(np.float64)
 
-        # 1. Total rainfall volume influx: V_in = sum(I_i * dt * A_i) [m^3]
+        # 1. Total rainfall/runoff volume influx: V_in = sum(I_i * dt * A_i) [m^3]
         vol_rain_m3 = np.sum((rain_rate_mm_hr.astype(np.float64) / 1000.0) * dt_hr * areas)
+
+        # Volumetric influx from Layer 2 conduit backflow: V_backflow = sum(Q_backflow * dt_sec) [m^3]
+        if backflow_rate_m3_s is not None:
+            bf_arr = np.asarray(backflow_rate_m3_s, dtype=np.float64)
+            vol_backflow_m3 = float(np.sum(np.maximum(0.0, bf_arr) * dt_sec))
+        else:
+            vol_backflow_m3 = 0.0
+
+        vol_total_inflow_m3 = vol_rain_m3 + vol_backflow_m3
 
         # 2. Total surface water storage on roads: V_stored = sum(d_i * A_i) [m^3]
         vol_stored_m3 = np.sum((water_depth_cm.astype(np.float64) / 100.0) * areas)
@@ -113,14 +125,16 @@ class MassConservationConstraint:
 
         # 5. Total volume accounted for
         vol_accounted_m3 = vol_stored_m3 + vol_drained_m3 + vol_infil_m3
-        vol_discrepancy_m3 = abs(vol_rain_m3 - vol_accounted_m3)
-        vol_error_pct = (vol_discrepancy_m3 / max(1.0, vol_rain_m3)) * 100.0
+        vol_discrepancy_m3 = abs(vol_total_inflow_m3 - vol_accounted_m3)
+        vol_error_pct = (vol_discrepancy_m3 / max(1.0, vol_total_inflow_m3)) * 100.0
 
         is_conserved = vol_error_pct <= self.tolerance_pct
 
         return {
             "is_conserved": is_conserved,
             "vol_rain_m3": round(float(vol_rain_m3), 4),
+            "vol_backflow_m3": round(float(vol_backflow_m3), 4),
+            "vol_total_inflow_m3": round(float(vol_total_inflow_m3), 4),
             "vol_stored_m3": round(float(vol_stored_m3), 4),
             "vol_drained_m3": round(float(vol_drained_m3), 4),
             "vol_infil_m3": round(float(vol_infil_m3), 4),

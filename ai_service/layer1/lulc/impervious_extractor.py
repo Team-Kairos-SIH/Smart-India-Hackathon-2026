@@ -65,7 +65,11 @@ class ImperviousExtractor:
 
         master_csv = self.datasets_dir / "chennai_unified_flood_master_dataset.csv"
         if not master_csv.exists():
-            raise FileNotFoundError(f"Missing master road dataset: {master_csv}")
+            alt_csv = self.base_dir / "ai_service" / "data" / "processed" / "chennai_roads_with_dem_attributes.csv"
+            if alt_csv.exists():
+                master_csv = alt_csv
+            else:
+                raise FileNotFoundError(f"Missing master road dataset: {master_csv}")
         self._cached_master_df = pd.read_csv(master_csv)
         return self._cached_master_df.copy()
 

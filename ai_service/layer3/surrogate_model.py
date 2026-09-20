@@ -42,16 +42,27 @@ class PhysicsInformedGraphSurrogate:
         rain_vectors: Dict[int, np.ndarray],
         clogging_modifier: float = 1.0,
         subcatchment_area_m2: float = 3500.0,
-        eval_pinn_loss: bool = False
+        eval_pinn_loss: bool = False,
+        is_runoff_preprocessed: bool = False,
+        backflow_vectors: Optional[Dict[int, np.ndarray]] = None
     ) -> Dict[str, Any]:
         """
         Executes sub-second hydrodynamic surrogate inference across all forward horizons.
 
         Parameters:
-          rain_vectors: Dict mapping horizon (minutes) -> rain intensity vector [mm/hr] (length n_nodes)
+          rain_vectors: Dict mapping horizon (minutes) -> rain intensity vector [mm/hr] (length n_nodes).
+              When ``is_runoff_preprocessed`` is True, this is interpreted as pre-computed
+              surface runoff rates (mm/hr) from Layer 1, and the internal crude 90%
+              runoff coefficient is bypassed.
           clogging_modifier: Multiplier on municipal solid waste clogging index
           subcatchment_area_m2: Nominal area per street corridor (default 3,500 m2)
           eval_pinn_loss: If True, evaluates edge-level Saint-Venant momentum & continuity loss (training/auditing)
+          is_runoff_preprocessed: If True, rain_vectors already contains LULC/soil/depression-adjusted
+              runoff rates from Layer 1. The surrogate skips its internal crude c_runoff=0.90
+              infiltration abstraction.
+          backflow_vectors: Optional Dict mapping horizon (minutes) -> Layer 2 conduit backflow
+              discharge vector [m3/s] (length n_nodes). Positive backflow acts as an additional
+              surface water source.
 
         Returns:
           Dict containing per-horizon street depths (cm), inundated counts, mass residuals, and latency.
@@ -82,9 +93,17 @@ class PhysicsInformedGraphSurrogate:
                 rain_rate = np.resize(rain_rate, self.n_nodes)
             rain_rate = rain_rate.astype(np.float64)
 
-            # Infiltration abstraction (10% of gross rain)
-            c_runoff = 0.90
-            gross_runoff_mm = rain_rate * dt_hr * c_runoff
+            # Runoff calculation
+            if is_runoff_preprocessed:
+                # Layer 1 already performed LULC imperviousness, soil infiltration,
+                # and depression storage calculations. Do not re-apply crude 10% abstraction.
+                gross_runoff_mm = rain_rate * dt_hr
+                infil_coeff = 0.0
+            else:
+                # Infiltration abstraction (10% of gross rain) for raw rainfall inputs
+                c_runoff = 0.90
+                gross_runoff_mm = rain_rate * dt_hr * c_runoff
+                infil_coeff = 0.10
 
             # Subsurface pipe intake (limited by conduit conveyance)
             evacuated_mm = np.minimum(gross_runoff_mm, eff_drain_rate * dt_hr)
@@ -94,8 +113,22 @@ class PhysicsInformedGraphSurrogate:
             actual_drained_rate = evacuated_mm / dt_hr
 
             # 2. Directed 2D Graph Message-Passing (A_hat)
-            # Water volume generated on street surface [m3]
-            v_surface_init = (excess_surface_mm / 1000.0) * areas
+            # Surface runoff volume generated on street [m3]
+            v_surface_runoff = (excess_surface_mm / 1000.0) * areas
+
+            # Layer 2 Conduit/Manhole Backflow volume [m3]
+            # V_backflow = Q_backflow [m3/s] * dt_sec
+            if backflow_vectors is not None and h_min in backflow_vectors:
+                q_backflow = np.asarray(backflow_vectors[h_min], dtype=np.float64)
+                if len(q_backflow) != self.n_nodes:
+                    q_backflow = np.resize(q_backflow, self.n_nodes)
+                v_backflow = np.maximum(0.0, q_backflow) * dt_sec
+            else:
+                q_backflow = None
+                v_backflow = np.zeros(self.n_nodes, dtype=np.float64)
+
+            # Combined initial surface water volume: Surface Runoff + Subsurface Backflow
+            v_surface_init = v_surface_runoff + v_backflow
 
             # 2-hop topological message passing via transpose of row-stochastic A_hat
             # Conserves total water volume exactly while redistributing into downslope depressions
@@ -128,7 +161,9 @@ class PhysicsInformedGraphSurrogate:
                 water_depth_cm=depth_cm,
                 drained_rate_mm_hr=actual_drained_rate,
                 subcatchment_areas_m2=areas,
-                lead_time_min=h_min
+                lead_time_min=h_min,
+                infiltration_coeff=infil_coeff,
+                backflow_rate_m3_s=q_backflow
             )
 
             # 5. Physics-Informed Saint-Venant Loss Evaluation (Optional / Auditing)

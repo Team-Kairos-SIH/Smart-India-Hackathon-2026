@@ -11,6 +11,7 @@ from typing import TYPE_CHECKING, Any
 from .graph_builder import StreetDrainageGraph
 from .mass_conservation_loss import MassConservationConstraint
 from .surrogate_model import HORIZONS_MIN, PIGNNSurrogateEngine
+from .coupling import Layer3Inputs, from_layer1_runoff, from_layer2_backflow, attach_layer2_backflow
 
 if TYPE_CHECKING:
     from .pipeline import Layer3Pipeline, Layer3Result
@@ -23,6 +24,10 @@ __all__ = [
     "Layer3Pipeline",
     "Layer3Result",
     "HORIZONS_MIN",
+    "Layer3Inputs",
+    "from_layer1_runoff",
+    "from_layer2_backflow",
+    "attach_layer2_backflow",
 ]
 
 
