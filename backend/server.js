@@ -40,29 +40,59 @@ app.get('/', (req, res) => {
   res.sendFile(path.join(FRONTEND_DIR, 'index.html'));
 });
 
+// Helper to fetch live simulation telemetry from Python AI microservice (Layer 0)
+function queryPythonTelemetry() {
+  return new Promise((resolve) => {
+    const req = http.get('http://127.0.0.1:8000/api/health', { timeout: 1200 }, (res) => {
+      if (res.statusCode !== 200) return resolve(null);
+      let data = '';
+      res.on('data', chunk => { data += chunk; });
+      res.on('end', () => {
+        try {
+          resolve(JSON.parse(data));
+        } catch (e) {
+          resolve(null);
+        }
+      });
+    });
+    req.on('error', () => resolve(null));
+    req.on('timeout', () => {
+      req.destroy();
+      resolve(null);
+    });
+  });
+}
+
 // Create HTTP and WebSocket server
 const server = http.createServer(app);
 const wss = new WebSocket.Server({ server, path: '/ws' });
 
-wss.on('connection', (ws) => {
+wss.on('connection', async (ws) => {
   console.log('[WebSocket] Client connected to live flood telemetry stream');
+  const initialPython = await queryPythonTelemetry();
   ws.send(JSON.stringify({
     type: 'CONNECTION_ESTABLISHED',
-    radar_station: 'IMD Meenambakkam',
+    radar_station: (initialPython && initialPython.radar_station) ? initialPython.radar_station : 'IMD Meenambakkam',
     active_nowcast_horizon: 'T+60m',
+    pipeline_bridge: initialPython ? 'Python Simulation (FastAPI:8000) -> Node Gateway (:5000) -> Web GIS' : 'Node Gateway Edge Telemetry (:5000)',
+    source: initialPython ? 'python_ai_service' : 'node_gateway_edge',
     timestamp: new Date().toISOString()
   }));
 
-  const interval = setInterval(() => {
+  const interval = setInterval(async () => {
     if (ws.readyState === WebSocket.OPEN) {
+      const pythonTelemetry = await queryPythonTelemetry();
       ws.send(JSON.stringify({
         type: 'TELEMETRY_HEARTBEAT',
-        radar_status: 'RECEIVING_SWEEPS',
+        radar_status: pythonTelemetry ? 'RECEIVING_SWEEPS (Python AI Coupled)' : 'RECEIVING_SWEEPS',
+        source: pythonTelemetry ? 'python_ai_service' : 'node_gateway_edge',
+        radar_station: (pythonTelemetry && pythonTelemetry.radar_station) ? pythonTelemetry.radar_station : 'IMD Meenambakkam',
+        equations: (pythonTelemetry && pythonTelemetry.equations) ? pythonTelemetry.equations : 'Manning-Saint-Venant coupled hydrodynamic routing',
         tide_stage_m: +(0.42 * Math.cos(Date.now() / 3600000) + 0.35).toFixed(2),
         timestamp: new Date().toISOString()
       }));
     }
-  }, 10000);
+  }, 8000);
 
   ws.on('close', () => clearInterval(interval));
 });
