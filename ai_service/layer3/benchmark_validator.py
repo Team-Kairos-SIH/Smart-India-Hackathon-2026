@@ -1,13 +1,11 @@
 """Layer 3: Benchmark Validator Module - Ground Truth & HEC-RAS Validation.
 
 Cross-validates surrogate predictions against:
-  1. 156 Quantitative Measured Flood Depths from 2015 Deluge (NDMA / NRSC survey)
+  1. Authenticated Quantitative Measured Flood Depths (NDMA / NRSC survey)
   2. Academic HEC-RAS 2D Hydrodynamic Benchmark Results (Adyar / Cooum Basins)
 
-Computes validation error metrics:
-  - Mean Absolute Error (MAE in cm)
-  - Root Mean Squared Error (RMSE in cm)
-  - Coefficient of Determination (R^2 Score)
+Strict rule: If real ground truth is not available, explicitly report NO_GROUND_TRUTH_DATA
+and do NOT fabricate MAE, RMSE, or R^2 scores.
 """
 
 import logging
@@ -32,15 +30,19 @@ class BenchmarkValidator:
         self._load_ground_truth()
 
     def _load_ground_truth(self):
-        """Locates and loads 00_master_flood_depth.csv."""
+        """Locates and loads authentic ground truth flood depth records if present."""
         candidates = list(self.datasets_dir.rglob("00_master_flood_depth.csv"))
-        if candidates:
-            self.df_ground_truth = pd.read_csv(candidates[0])
-            # Filter valid coordinate records
-            self.df_ground_truth = self.df_ground_truth.dropna(subset=["latitude", "longitude", "depth_cm"])
-            logger.info("Loaded %d authentic field flood depth records", len(self.df_ground_truth))
-        else:
-            logger.warning("Ground truth depth CSV not found, using synthetic benchmark.")
+        if not candidates:
+            candidates = list((self.base_dir / "ai_service" / "data").rglob("*flood_depth*.csv"))
+
+        if candidates and candidates[0].exists() and candidates[0].stat().st_size > 100:
+            df = pd.read_csv(candidates[0])
+            if {"latitude", "longitude", "depth_cm"}.issubset(df.columns):
+                self.df_ground_truth = df.dropna(subset=["latitude", "longitude", "depth_cm"])
+                logger.info("Loaded %d authentic field flood depth records", len(self.df_ground_truth))
+                return
+
+        logger.info("GROUND TRUTH AVAILABLE: NO")
 
     def evaluate_predictions(
         self,
@@ -49,12 +51,17 @@ class BenchmarkValidator:
     ) -> Dict[str, Any]:
         """
         Matches predicted street segments with nearest surveyed field observation points.
-
-        Returns:
-          Dict containing MAE (cm), RMSE (cm), and R^2 score.
+        Returns authentic error metrics or explicitly reports that ground truth is unavailable.
         """
         if self.df_ground_truth is None or len(self.df_ground_truth) == 0:
-            return {"status": "NO_GROUND_TRUTH_DATA", "mae_cm": 0.0, "rmse_cm": 0.0, "r2_score": 0.88}
+            return {
+                "status": "NO_GROUND_TRUTH_DATA",
+                "ground_truth_available": False,
+                "matched_benchmark_points": 0,
+                "mae_cm": None,
+                "rmse_cm": None,
+                "r2_score": None
+            }
 
         # Query nearest road segment for each ground truth point
         gt_coords = np.column_stack([self.df_ground_truth["longitude"].values, self.df_ground_truth["latitude"].values])
@@ -66,11 +73,18 @@ class BenchmarkValidator:
         y_pred = predicted_depths_cm[indices[valid_mask]]
 
         if len(y_true) < 5:
-            return {"status": "INSUFFICIENT_MATCHES", "mae_cm": 4.2, "rmse_cm": 6.8, "r2_score": 0.86}
+            return {
+                "status": "INSUFFICIENT_MATCHES",
+                "ground_truth_available": True,
+                "matched_benchmark_points": int(len(y_true)),
+                "mae_cm": None,
+                "rmse_cm": None,
+                "r2_score": None
+            }
 
         mae = float(np.mean(np.abs(y_pred - y_true)))
         rmse = float(np.sqrt(np.mean((y_pred - y_true) ** 2)))
-        
+
         # R2 score
         ss_res = np.sum((y_true - y_pred) ** 2)
         ss_tot = np.sum((y_true - np.mean(y_true)) ** 2)
@@ -78,6 +92,7 @@ class BenchmarkValidator:
 
         return {
             "status": "VALIDATED",
+            "ground_truth_available": True,
             "matched_benchmark_points": int(len(y_true)),
             "mae_cm": round(mae, 2),
             "rmse_cm": round(rmse, 2),

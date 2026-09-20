@@ -60,7 +60,9 @@ class PhysicsInformedGraphSurrogate:
 
         elevations = self.features["elevations"]
         slopes = self.features["slopes"]
-        q_cap = self.features.get("q_cap", np.full(self.n_nodes, 0.20, dtype=np.float32))
+        if "q_cap" not in self.features or self.features["q_cap"] is None:
+            raise KeyError("Missing real 'q_cap' feature in graph node feature matrix. Real hydraulic data required.")
+        q_cap = self.features["q_cap"]
         areas = np.full(self.n_nodes, subcatchment_area_m2, dtype=np.float64)
 
         results_by_horizon: Dict[int, np.ndarray] = {}

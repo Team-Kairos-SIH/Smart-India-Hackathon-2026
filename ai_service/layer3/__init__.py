@@ -7,7 +7,7 @@ and historical ground truth flood depth validation.
 
 from typing import TYPE_CHECKING, Any
 
-from .benchmark_validator import BenchmarkValidator
+# BenchmarkValidator is lazily imported to avoid heavy dependencies at package import time.
 from .graph_builder import StreetDrainageGraph
 from .mass_conservation_loss import MassConservationConstraint
 from .surrogate_model import HORIZONS_MIN, PIGNNSurrogateEngine
@@ -27,6 +27,9 @@ __all__ = [
 
 
 def __getattr__(name: str) -> Any:
+    if name == "BenchmarkValidator":
+        from .benchmark_validator import BenchmarkValidator
+        return BenchmarkValidator
     if name in ("Layer3Pipeline", "Layer3Result"):
         from .pipeline import Layer3Pipeline, Layer3Result
         if name == "Layer3Pipeline":
