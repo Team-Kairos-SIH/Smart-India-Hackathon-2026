@@ -6,7 +6,6 @@ import json
 import logging
 import networkx as nx
 import os
-import osmnx as ox
 import pandas as pd
 import pickle
 import re

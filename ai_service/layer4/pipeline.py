@@ -21,7 +21,17 @@ from ai_service.layer4.temporal_flood import TemporalFloodDepthService
 from ai_service.layer4.routing_engine import DynamicRoutingEngine, RouteRequest
 from ai_service.layer4.critical_assets_monitor import CriticalAssetsMonitor
 
+from dataclasses import dataclass, field
+
 logger = logging.getLogger(__name__)
+
+@dataclass
+class Layer4Result:
+    routes: List[Dict[str, Any]]
+    substation_risks: Dict[str, Any]
+    oxygen_depot_risks: Optional[Dict[str, Any]] = None
+    benchmarks: Optional[Dict[str, Any]] = None
+    diagnostics: Dict[str, Any] = field(default_factory=dict)
 
 class Layer4Pipeline:
     def __init__(self, graph_path: str):

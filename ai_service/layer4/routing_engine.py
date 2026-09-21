@@ -534,3 +534,6 @@ class DynamicRoutingEngine:
             blocked_edges=blocked,
             failure_reason=reason
         )
+
+    # Backwards compatibility alias
+    find_route = solve_route
