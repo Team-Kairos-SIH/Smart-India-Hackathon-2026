@@ -10,7 +10,10 @@ import logging
 from pathlib import Path
 from typing import Any, Dict, List, Optional, Tuple
 import json
-import geopandas as gpd
+try:
+    import geopandas as gpd
+except ImportError:
+    gpd = None
 import pandas as pd
 import numpy as np
 
@@ -19,14 +22,6 @@ from .conduit_flow import ConduitFlowEngine
 
 logger = logging.getLogger(__name__)
 
-
-class DrainageGraphNetwork:
-    """Manages 1D topological graph representation of Chennai stormwater conduits."""
-
-    def __init__(self, base_dir: Optional[Path] = None):
-        self.base_dir = base_dir or Path(__file__).resolve().parent.parent.parent
-        self.clogging_model = SolidWasteCloggingModel(base_dir=self.base_dir)
-        self.conduit_engine = ConduitFlowEngine()
 # Official CPHEEO Stormwater Drainage & IRC:SP:50 Hierarchy Norms
 CPHEEO_PIPE_HIERARCHY = {
     "arterial": 1.80,     # 1800mm primary trunk outfall / canal feeder
@@ -132,16 +127,33 @@ class DrainageGraphNetwork:
         """Construct graph from drainage network GeoJSON and DEM attributes."""
         try:
             drain_path = find_dataset_path(self.base_dir, "drainage network.geojson")
-            gdf = gpd.read_file(drain_path)
-            logger.info("Building drainage graph from %d conduit vectors", len(gdf))
+            records = []
+            if gpd is not None:
+                gdf = gpd.read_file(drain_path)
+                for idx, row in gdf.iterrows():
+                    geom = row.geometry
+                    if geom is not None and not geom.is_empty:
+                        records.append((idx, row, float(geom.length * 111139.0)))
+            else:
+                with open(drain_path, "r", encoding="utf-8") as f:
+                    data = json.load(f)
+                features = data.get("features", [])
+                for idx, feat in enumerate(features):
+                    props = feat.get("properties", {})
+                    geom = feat.get("geometry", {})
+                    coords = geom.get("coordinates", [])
+                    deg_len = 0.0
+                    if geom.get("type") == "LineString" and len(coords) >= 2:
+                        for c1, c2 in zip(coords[:-1], coords[1:]):
+                            deg_len += float(np.hypot(c2[0] - c1[0], c2[1] - c1[1]))
+                    if deg_len > 0:
+                        records.append((idx, props, deg_len * 111139.0))
 
-            for idx, row in gdf.iterrows():
+            logger.info("Building drainage graph from %d conduit vectors", len(records))
+
+            for idx, row, raw_len in records:
                 edge_id = f"DRN_{idx:05d}"
-                geom = row.geometry
-                if geom is None or geom.is_empty:
-                    continue
-
-                length_m = max(20.0, float(geom.length * 111139.0))  # approx degrees to meters
+                length_m = max(20.0, raw_len)
                 dia_m = self._infer_cpheeo_diameter(row, idx)
                 zone_no = (idx % 15) + 1
                 mu = self.clogging_model.get_zone_clogging_factor(zone_no)
