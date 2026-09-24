@@ -10,7 +10,10 @@ import logging
 from pathlib import Path
 from typing import Any, Dict, List, Optional, Tuple
 import json
-import geopandas as gpd
+try:
+    import geopandas as gpd
+except ImportError:
+    gpd = None
 import pandas as pd
 import numpy as np
 
@@ -19,14 +22,6 @@ from .conduit_flow import ConduitFlowEngine
 
 logger = logging.getLogger(__name__)
 
-
-class DrainageGraphNetwork:
-    """Manages 1D topological graph representation of Chennai stormwater conduits."""
-
-    def __init__(self, base_dir: Optional[Path] = None):
-        self.base_dir = base_dir or Path(__file__).resolve().parent.parent.parent
-        self.clogging_model = SolidWasteCloggingModel(base_dir=self.base_dir)
-        self.conduit_engine = ConduitFlowEngine()
 # Official CPHEEO Stormwater Drainage & IRC:SP:50 Hierarchy Norms
 CPHEEO_PIPE_HIERARCHY = {
     "arterial": 1.80,     # 1800mm primary trunk outfall / canal feeder

@@ -8,7 +8,11 @@ from typing import TYPE_CHECKING, Any
 
 from .clogging_model import DEFAULT_MANNING_ROUGHNESS, SolidWasteCloggingModel
 from .conduit_flow import ConduitFlowEngine
-from .drainage_graph import DrainageGraphNetwork
+from .drainage_graph import (
+    CPHEEO_PIPE_HIERARCHY,
+    DrainageGraphNetwork,
+    TidalBoundaryEngine,
+)
 from .inlet_capture import InletCaptureEngine
 from .manhole_surcharge import ManholeSurchargeEngine
 
@@ -21,6 +25,8 @@ __all__ = [
     "InletCaptureEngine",
     "ManholeSurchargeEngine",
     "DrainageGraphNetwork",
+    "TidalBoundaryEngine",
+    "CPHEEO_PIPE_HIERARCHY",
     "Layer2Pipeline",
     "Layer2Result",
     "DEFAULT_MANNING_ROUGHNESS",
