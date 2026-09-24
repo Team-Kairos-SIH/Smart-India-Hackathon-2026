@@ -8,12 +8,26 @@ and LULC / soil infiltration surface runoff generation.
 
 from typing import TYPE_CHECKING, Any
 
+from .dem import (
+    DEFAULT_CHENNAI_BOUNDS_WGS84,
+    DEFAULT_PIXEL_RES_M,
+    DEFAULT_UTM_CRS,
+    DEMBuilder,
+    HydroConditioner,
+    HydrologicDerivatives,
+    RoadElevationSampler,
+    SWDNetworkManager,
+    find_or_extract_file,
+)
 from .lulc import (
     ImperviousExtractor,
     SoilHydrologyModel,
     SurfaceRunoffGenerator,
     RunoffResult,
+    Sentinel2Processor,
 )
+from . import dem
+from . import lulc
 
 try:
     from .dem_builder import (
@@ -38,19 +52,24 @@ if TYPE_CHECKING:
     from .pipeline import Layer1Pipeline, Layer1Result
 
 __all__ = [
+    "dem",
+    "lulc",
     "DEMBuilder",
     "HydroConditioner",
     "HydrologicDerivatives",
     "RoadElevationSampler",
+    "SWDNetworkManager",
     "ImperviousExtractor",
     "SoilHydrologyModel",
     "SurfaceRunoffGenerator",
     "RunoffResult",
+    "Sentinel2Processor",
     "Layer1Pipeline",
     "Layer1Result",
     "DEFAULT_CHENNAI_BOUNDS_WGS84",
     "DEFAULT_UTM_CRS",
     "DEFAULT_PIXEL_RES_M",
+    "find_or_extract_file",
 ]
 
 

@@ -1,31 +1,27 @@
-"""Layer 4: Critical Assets Monitor - Substation Plinth Safeguarding & Medical Oxygen Depots.
+"""Layer 4: Critical Assets Monitor - Substation Plinth Safeguarding.
 
-Monitors critical urban energy and healthcare lifeline installations across Chennai:
-  1. 20 TANGEDCO 230kV / 110kV Electrical Substations
-     - Risk Assessment: Real-time Flood Depth z_flood vs Plinth Elevation z_plinth (40 - 65 cm)
-     - Margin Criterion: Delta z = z_plinth - z_flood
-     - Automated Predictive De-Energization Alert triggered when Delta z < 15 cm (z_flood > z_plinth - 15cm)
-     - Circuit Breaker Tripping Protocol to avoid explosive oil flashover & urban electrocution
-  2. Critical Medical Oxygen Depots & Hospital Cryogenic Yards
-     - RGGGH, Stanley, KMC, Apollo Greams Road, MIOT International
-     - Safeguarding ambient vaporizers and pressure manifolds from cryogenic freezing collapse
+Monitors critical urban energy infrastructure by connecting geospatial assets
+to Layer 3 flood predictions via the Layer 4 road network.
 """
 
-import json
+import csv
 import logging
 from dataclasses import dataclass
-from pathlib import Path
 from typing import Any, Dict, List, Optional
-import numpy as np
+import math
 
-try:
-    from ai_service.layer3.graph_builder import StreetDrainageGraph
-except ImportError:
-    from ..layer3.graph_builder import StreetDrainageGraph
-
+from ai_service.layer4.temporal_flood import TemporalFloodDepthService
 
 logger = logging.getLogger(__name__)
 
+# Configurable thresholds
+STATUS_SAFE = "SAFE"
+STATUS_AT_RISK = "AT_RISK"
+STATUS_CRITICAL = "CRITICAL"
+STATUS_UNKNOWN = "UNKNOWN"
+
+# We assume a default critical clearance margin of 15cm if plinth is known
+CRITICAL_MARGIN_CM = 15.0
 
 # TANGEDCO Substation Catalog (Greater Chennai Corporation Core Grid)
 CHENNAI_SUBSTATIONS = [
@@ -75,69 +71,163 @@ MEDICAL_OXYGEN_DEPOTS = [
     },
     {
         "id": "O2-003",
-        "name": "Kilpauk Medical College (KMC) Oxygen Farm (10 KL Tank)",
+        "name": "KMC Kilpauk Oxygen Reservoir (13 KL Tank)",
         "type": "Cryogenic Oxygen Plant",
         "plinth_cm": 60.0,
         "lat": 13.0784,
         "lon": 80.2425,
-        "facility": "Govt Kilpauk Medical College Hospital",
-        "critical_capacity_kl": 10.0
+        "facility": "Kilpauk Medical College Hospital",
+        "critical_capacity_kl": 13.0
     },
     {
         "id": "O2-004",
-        "name": "Apollo Hospitals Greams Road Medical Gas Depot (13 KL)",
+        "name": "Apollo Hospitals Central Liquid Gas Farm (10 KL Tank)",
         "type": "Cryogenic Oxygen Plant",
         "plinth_cm": 70.0,
         "lat": 13.0604,
         "lon": 80.2514,
-        "facility": "Apollo Hospitals Main Facility",
-        "critical_capacity_kl": 13.0
+        "facility": "Apollo Hospitals Greams Road",
+        "critical_capacity_kl": 10.0
     },
     {
         "id": "O2-005",
-        "name": "MIOT International Flood Wall Cryogenic Depot (10 KL)",
+        "name": "MIOT International Medical Gas Depot (12 KL Tank)",
         "type": "Cryogenic Oxygen Plant",
-        "plinth_cm": 50.0,
+        "plinth_cm": 80.0,
         "lat": 13.0185,
         "lon": 80.1856,
         "facility": "MIOT International Manapakkam",
-        "critical_capacity_kl": 10.0
-    },
+        "critical_capacity_kl": 12.0
+    }
 ]
 
-# Major Hospitals and Relief Centers
-CRITICAL_FACILITIES = [
-    {"id": "HOSP-01", "name": "Rajiv Gandhi Govt General Hospital (RGGGH)", "type": "Hospital", "lat": 13.0805, "lon": 80.2785},
-    {"id": "HOSP-02", "name": "Government Stanley Hospital", "type": "Hospital", "lat": 13.1070, "lon": 80.2870},
-    {"id": "HOSP-03", "name": "Kilpauk Medical College (KMC)", "type": "Hospital", "lat": 13.0784, "lon": 80.2425},
-    {"id": "HOSP-04", "name": "Apollo Hospitals Greams Road", "type": "Hospital", "lat": 13.0604, "lon": 80.2514},
-    {"id": "HOSP-05", "name": "MIOT International Manapakkam", "type": "Hospital", "lat": 13.0185, "lon": 80.1856},
-    {"id": "CAMP-01", "name": "Jawaharlal Nehru Stadium Relief Hub", "type": "Relief Center", "lat": 13.0841, "lon": 80.2742},
-    {"id": "CAMP-02", "name": "Chepauk Community Flood Shelter", "type": "Relief Center", "lat": 13.0628, "lon": 80.2789},
-    {"id": "CAMP-03", "name": "Guindy Race Course High Ground Shelter", "type": "Relief Center", "lat": 13.0112, "lon": 80.2114},
-]
+@dataclass
+class SubstationMonitoringResult:
+    substation_id: str
+    name: str
+    voltage_kv: str
+    latitude: str
+    longitude: str
+    road_segment_id: str
+    ground_elevation_m: str
+    plinth_height_m: str
+    plinth_height_known: bool
+    source_information: str
+    forecast_depths: Dict[str, float]
+    maximum_effective_depth: float
+    maximum_forecast_horizon_affected: str
+    flood_status: str
+    uncertainty_flag: str
+    explanation: str
 
 
 class CriticalAssetsMonitor:
-    """Monitors flood hazards at vital energy substations and medical oxygen depots."""
-
-    def __init__(self, graph: Optional[StreetDrainageGraph] = None):
-        self.graph = graph or StreetDrainageGraph()
-        self.substations = CHENNAI_SUBSTATIONS
+    def __init__(self, csv_path: str = "ai_service/layer4/data/substations.csv"):
+        self.csv_path = csv_path
+        self.substations = self._load_substations()
         self.oxygen_depots = MEDICAL_OXYGEN_DEPOTS
-        self.facilities = CRITICAL_FACILITIES
 
-        # Map each substation to its nearest road node
-        self._substation_nodes = [
-            self.graph.kdtree.query([ss["lon"], ss["lat"]])[1]
-            for ss in self.substations
-        ]
+    def _load_substations(self) -> List[Dict[str, str]]:
+        subs = []
+        try:
+            with open(self.csv_path, 'r', encoding='utf-8') as f:
+                reader = csv.DictReader(f)
+                for row in reader:
+                    subs.append(row)
+        except Exception as e:
+            logger.error(f"Failed to load substations from {self.csv_path}: {e}")
+        return subs
 
-        # Map each oxygen depot to its nearest road node
-        self._oxygen_nodes = [
-            self.graph.kdtree.query([depot["lon"], depot["lat"]])[1]
-            for depot in self.oxygen_depots
-        ]
+    def evaluate_substations(self, temporal_service: TemporalFloodDepthService) -> List[SubstationMonitoringResult]:
+        results = []
+        horizons_min = [15.0, 30.0, 60.0, 90.0, 120.0, 180.0]
+        horizon_labels = {
+            15.0: "T+15", 30.0: "T+30", 60.0: "T+60", 
+            90.0: "T+90", 120.0: "T+120", 180.0: "T+180"
+        }
+
+        for sub in self.substations:
+            sub_id = sub.get("substation_id", "")
+            seg_id = sub.get("road_segment_id", "")
+            plinth_str = sub.get("plinth_height_m", "")
+            
+            plinth_known = bool(plinth_str.strip())
+            
+            # Defaults
+            max_depth = 0.0
+            max_horizon = "N/A"
+            forecasts = {}
+            status = STATUS_UNKNOWN
+            uncertainty = ""
+            explanation = ""
+            
+            if not seg_id:
+                uncertainty = "NO_ROAD_MAPPING"
+                explanation = "Substation is not mapped to a valid Layer 4 road segment. Flood forecast cannot be obtained."
+            else:
+                try:
+                    is_data_available = True
+                    for t in horizons_min:
+                        try:
+                            res_dict = temporal_service.get_effective_depth(seg_id, t)
+                            depth = res_dict["effective_depth_cm"]
+                        except ValueError:
+                            is_data_available = False
+                            break
+                            
+                        forecasts[horizon_labels[t]] = depth
+                        if depth > max_depth:
+                            max_depth = depth
+                            max_horizon = horizon_labels[t]
+                            
+                    if not is_data_available:
+                        status = STATUS_UNKNOWN
+                        uncertainty = "DATA_UNAVAILABLE"
+                        explanation = f"Substation is associated with road segment {seg_id}, but Layer 3 data is unavailable or missing."
+                    else:
+                        if not plinth_known:
+                            status = STATUS_UNKNOWN
+                            uncertainty = "PLINTH_UNKNOWN"
+                            explanation = f"Substation is associated with road segment {seg_id}. The Layer 3 forecast reaches {max_depth:.1f} cm effective depth at {max_horizon}. The asset's authoritative plinth height is unavailable, so flood exposure cannot be determined with full confidence."
+                        else:
+                            plinth_cm = float(plinth_str) * 100.0 # Convert m to cm
+                            margin = plinth_cm - max_depth
+                            
+                            if margin <= 0:
+                                status = STATUS_CRITICAL
+                                explanation = f"Substation is associated with road segment {seg_id}. The Layer 3 forecast reaches {max_depth:.1f} cm at {max_horizon}, exceeding the known plinth height by {abs(margin):.1f} cm! Flooding is imminent."
+                            elif margin <= CRITICAL_MARGIN_CM:
+                                status = STATUS_AT_RISK
+                                explanation = f"Substation is associated with road segment {seg_id}. The Layer 3 forecast reaches {max_depth:.1f} cm at {max_horizon}. Margin ({margin:.1f} cm) is below critical threshold."
+                            else:
+                                status = STATUS_SAFE
+                                explanation = f"Substation is associated with road segment {seg_id}. Maximum forecast depth {max_depth:.1f} cm at {max_horizon} is safely below plinth margin ({margin:.1f} cm clearance)."
+                except Exception as e:
+                    status = STATUS_UNKNOWN
+                    uncertainty = "EVALUATION_ERROR"
+                    explanation = f"Error evaluating risk: {str(e)}"
+
+            res = SubstationMonitoringResult(
+                substation_id=sub_id,
+                name=sub.get("name", ""),
+                voltage_kv=sub.get("voltage_kv", ""),
+                latitude=sub.get("latitude", ""),
+                longitude=sub.get("longitude", ""),
+                road_segment_id=seg_id,
+                ground_elevation_m=sub.get("ground_elevation_m", ""),
+                plinth_height_m=plinth_str,
+                plinth_height_known=plinth_known,
+                source_information=sub.get("source_name", ""),
+                forecast_depths=forecasts,
+                maximum_effective_depth=round(max_depth, 2),
+                maximum_forecast_horizon_affected=max_horizon,
+                flood_status=status,
+                uncertainty_flag=uncertainty,
+                explanation=explanation
+            )
+            results.append(res)
+            
+        return results
 
     def compute_plinth_vulnerability(
         self,
@@ -145,20 +235,7 @@ class CriticalAssetsMonitor:
         z_plinth_cm: float,
         margin_threshold_cm: float = 15.0
     ) -> Dict[str, Any]:
-        """
-        Calculates Plinth Vulnerability Index (PVI) and early warning action state.
-
-        Mathematical Formulation:
-          Delta z = z_plinth - z_flood
-          PVI = z_flood / z_plinth
-          Trigger: z_flood > z_plinth - 15 cm  <=>  Delta z < 15 cm
-
-        Alert States:
-          - NORMAL: Delta z >= 25 cm (PVI <= 0.50)
-          - WARNING: 15 cm < Delta z < 25 cm (Deploy dewatering pumps)
-          - CRITICAL_TRIP_RISK: 0 cm < Delta z <= 15 cm (Automated SCADA de-energization warning)
-          - BREAKER_TRIPPED_EMERGENCY: Delta z <= 0 cm (Water reached plinth, arc flash danger)
-        """
+        """Calculates Plinth Vulnerability Index (PVI) and early warning action state."""
         margin_cm = z_plinth_cm - z_flood_cm
         pvi = round(z_flood_cm / max(1.0, z_plinth_cm), 3)
 
@@ -199,20 +276,16 @@ class CriticalAssetsMonitor:
             "trip_warning_active": margin_cm <= margin_threshold_cm
         }
 
-    def evaluate_substation_risks(self, depths_cm: np.ndarray) -> Dict[str, Any]:
-        """
-        Assesses electrical substation plinth vulnerability and circuit breaker trip risks.
-        """
+    def evaluate_substation_risks(self, depths_cm: Any) -> Dict[str, Any]:
+        """Assesses electrical substation plinth vulnerability across catalog."""
         results = []
         critical_count = 0
         warning_count = 0
         normal_count = 0
 
-        for i, ss in enumerate(self.substations):
-            node_idx = self._substation_nodes[i]
-            water_depth = float(depths_cm[node_idx])
+        for i, ss in enumerate(CHENNAI_SUBSTATIONS):
+            water_depth = float(depths_cm[i]) if hasattr(depths_cm, '__getitem__') and i < len(depths_cm) else 0.0
             plinth = ss["plinth_cm"]
-
             vuln = self.compute_plinth_vulnerability(water_depth, plinth, margin_threshold_cm=15.0)
 
             if vuln["status"] in ("CRITICAL_TRIP_RISK", "BREAKER_TRIPPED_EMERGENCY"):
@@ -239,27 +312,23 @@ class CriticalAssetsMonitor:
             })
 
         return {
-            "total_substations": len(self.substations),
+            "total_substations": len(CHENNAI_SUBSTATIONS),
             "critical_count": critical_count,
             "warning_count": warning_count,
             "normal_count": normal_count,
             "substations": results
         }
 
-    def evaluate_medical_oxygen_depots(self, depths_cm: np.ndarray) -> Dict[str, Any]:
-        """
-        Assesses flood vulnerability for hospital liquid medical oxygen (LMO) tanks & vaporizer skids.
-        """
+    def evaluate_medical_oxygen_depots(self, depths_cm: Any) -> Dict[str, Any]:
+        """Assesses flood vulnerability for hospital liquid medical oxygen depots."""
         results = []
         critical_count = 0
         warning_count = 0
         normal_count = 0
 
-        for i, depot in enumerate(self.oxygen_depots):
-            node_idx = self._oxygen_nodes[i]
-            water_depth = float(depths_cm[node_idx])
+        for i, depot in enumerate(MEDICAL_OXYGEN_DEPOTS):
+            water_depth = float(depths_cm[i]) if hasattr(depths_cm, '__getitem__') and i < len(depths_cm) else 0.0
             plinth = depot["plinth_cm"]
-
             vuln = self.compute_plinth_vulnerability(water_depth, plinth, margin_threshold_cm=15.0)
 
             if vuln["status"] in ("CRITICAL_TRIP_RISK", "BREAKER_TRIPPED_EMERGENCY"):
@@ -292,10 +361,9 @@ class CriticalAssetsMonitor:
             })
 
         return {
-            "total_depots": len(self.oxygen_depots),
+            "total_depots": len(MEDICAL_OXYGEN_DEPOTS),
             "critical_count": critical_count,
             "warning_count": warning_count,
             "normal_count": normal_count,
             "oxygen_depots": results
         }
-
