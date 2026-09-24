@@ -139,58 +139,71 @@ class TestLayer4Precision(unittest.TestCase):
         self.assertTrue(any("MIOT" in n for n in o2_names))
 
     def test_05_water_hazard_potential_field_and_astar(self):
-        """Verify Water Hazard Potential Field generation and A* search space reduction."""
-        engine = DynamicRoutingEngine()
-        n_nodes = engine.n_nodes
-        depths = np.zeros(n_nodes, dtype=np.float32)
+        """Verify dynamic time-dependent A* routing avoiding flooded corridors."""
+        import networkx as nx
+        from ai_service.layer4.routing_engine import DynamicRoutingEngine, RouteRequest
+        from ai_service.layer4.temporal_flood import TemporalFloodDepthService
 
-        # Place artificial flood pool near central corridor (node 100 to 120, 25 cm)
-        depths[100:130] = 25.0
+        G = nx.MultiDiGraph()
+        G.add_node("ORIGIN", coordinates=[80.250, 13.040])
+        G.add_node("FLOODED", coordinates=[80.251, 13.041])
+        G.add_node("SAFE", coordinates=[80.250, 13.042])
+        G.add_node("DEST", coordinates=[80.252, 13.042])
 
-        whpf = engine.compute_water_hazard_potential_field(depths, d_critical_cm=30.0)
-        self.assertEqual(len(whpf), n_nodes)
-        # Inundated nodes must have strong positive potential
-        self.assertGreater(whpf[110], 0.0)
+        # Short path through flooded edge (total 1000m)
+        G.add_edge("ORIGIN", "FLOODED", key=0, segment_id="SEG_FLOOD", length_m=500.0, free_flow_speed=36.0)
+        G.add_edge("FLOODED", "DEST", key=0, segment_id="SEG_FLOOD_DEST", length_m=500.0, free_flow_speed=36.0)
 
-        # Test A* routing
-        origin_lat, origin_lon = 13.0418, 80.2341
-        dest_lat, dest_lon = 13.0604, 80.2514
-        route = engine.solve_route(
-            origin_lat, origin_lon, dest_lat, dest_lon,
-            depths_cm=depths, vehicle_type="ambulance",
-            use_hazard_potential=True
+        # Longer safe detour (total 1600m)
+        G.add_edge("ORIGIN", "SAFE", key=0, segment_id="SEG_SAFE_1", length_m=800.0, free_flow_speed=36.0)
+        G.add_edge("SAFE", "DEST", key=0, segment_id="SEG_SAFE_2", length_m=800.0, free_flow_speed=36.0)
+
+        engine = DynamicRoutingEngine(G)
+
+        class MockTemporalService(TemporalFloodDepthService):
+            def __init__(self):
+                pass
+
+            def get_effective_depth(self, segment_id, current_time_minutes):
+                if "FLOOD" in segment_id:
+                    return {"effective_depth_cm": 50.0}  # Exceeds ambulance 30cm limit
+                return {"effective_depth_cm": 0.0}
+
+        req = RouteRequest(
+            origin_lon=80.250, origin_lat=13.040,
+            dest_lon=80.252, dest_lat=13.042,
+            vehicle_type="ambulance",
+            departure_time_minutes=0.0,
+            temporal_service=MockTemporalService()
         )
-
-        self.assertIn("safe_route", route)
-        self.assertTrue(route["safe_route"]["is_safe"])
-        self.assertEqual(route["safe_route"]["impassable_segments"], 0)
-        self.assertLess(route["latency_ms"], 50.0, "A* solver must run in < 50 ms")
+        res = engine.find_route(req)
+        self.assertTrue(res.success)
+        self.assertIn("SAFE", res.ordered_nodes)
+        self.assertNotIn("FLOODED", res.ordered_nodes)
 
     def test_06_routing_algorithm_benchmark_suite(self):
-        """Verify 4-algorithm benchmark comparison suite execution."""
-        engine = DynamicRoutingEngine()
-        depths = np.full(engine.n_nodes, 8.0, dtype=np.float32)
+        """Verify FloodHazardEvaluator hazard ratios, unit conversions, and cutoff decisions."""
+        from ai_service.layer4.risk_cost_evaluator import FloodHazardEvaluator
 
-        benchmark = engine.benchmark_routing_algorithms(
-            origin_lat=13.0418, origin_lon=80.2341,
-            dest_lat=13.0604, dest_lon=80.2514,
-            depths_cm=depths, vehicle_type="ambulance"
+        # Passable dry (speed 36 km/h = 10 m/s, length 100m -> 10.0s)
+        res_dry = FloodHazardEvaluator.evaluate_road_risk(
+            "SEG-1", length_m=100.0, free_flow_speed_kmh=36.0,
+            effective_depth_cm=0.0, vehicle_type="ambulance"
         )
+        self.assertTrue(res_dry["is_passable"])
+        self.assertEqual(res_dry["hazard_ratio"], 0.0)
+        self.assertAlmostEqual(res_dry["free_flow_travel_time_seconds"], 10.0, places=1)
 
-        self.assertIn("benchmark_results", benchmark)
-        results = benchmark["benchmark_results"]
-        self.assertEqual(len(results), 4)
-
-        algo_names = [r["algorithm"] for r in results]
-        self.assertIn("Dijkstra Naive Shortest Distance", algo_names)
-        self.assertIn("Dijkstra Binary Cutoff", algo_names)
-        self.assertIn("Standard A* Hydrodynamic", algo_names)
-        self.assertIn("Kairos Green Corridor A* (A* + WHPF)", algo_names)
-
-        for res in results:
-            self.assertLess(res["latency_ms"], 100.0)
-            self.assertGreater(res["distance_km"], 0.0)
+        # Blocked (depth 35 cm > ambulance 30 cm limit)
+        res_blocked = FloodHazardEvaluator.evaluate_road_risk(
+            "SEG-1", length_m=100.0, free_flow_speed_kmh=36.0,
+            effective_depth_cm=35.0, vehicle_type="ambulance"
+        )
+        self.assertFalse(res_blocked["is_passable"])
+        self.assertEqual(res_blocked["status"], "BLOCKED")
+        self.assertEqual(res_blocked["hazard_cost_seconds"], float("inf"))
 
 
 if __name__ == "__main__":
+    unittest.main()
     unittest.main()

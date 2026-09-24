@@ -124,72 +124,102 @@ class DrainageGraphNetwork:
         return CPHEEO_PIPE_HIERARCHY["local"]
 
     def _build_network(self):
-        """Construct graph from drainage network GeoJSON and DEM attributes."""
-        try:
-            drain_path = find_dataset_path(self.base_dir, "drainage network.geojson")
-            records = []
-            if gpd is not None:
-                gdf = gpd.read_file(drain_path)
-                for idx, row in gdf.iterrows():
-                    geom = row.geometry
-                    if geom is not None and not geom.is_empty:
-                        records.append((idx, row, float(geom.length * 111139.0)))
+        """Construct graph from real drainage network GeoJSON and DEM attributes."""
+        drain_path = self.base_dir / "ai_service" / "data" / "network" / "drainage_network.geojson"
+        if not drain_path.exists():
+            drain_path = self.base_dir / "Datasets" / "network" / "drainage_network.geojson"
+        if not drain_path.exists():
+            try:
+                drain_path = find_dataset_path(self.base_dir, "drainage_network.geojson")
+            except Exception:
+                pass
+
+        if not drain_path.exists():
+            raise FileNotFoundError(
+                "REAL DRAINAGE NETWORK UNAVAILABLE: Required real dataset missing at "
+                "'ai_service/data/network/drainage_network.geojson'. "
+                "Silent synthetic fallback is prohibited in the real operational path."
+            )
+
+        logger.info("Building real drainage graph from: %s", drain_path)
+        with open(drain_path, "r", encoding="utf-8") as f:
+            drain_data = json.load(f)
+
+        features = drain_data.get("features", [])
+        if len(features) != 825:
+            logger.warning("Expected 825 drainage features, found %d", len(features))
+
+        cos_lat = np.cos(np.radians(13.04))
+
+        for idx, feat in enumerate(features):
+            edge_id = f"DRN_{idx:05d}"
+            props = feat.get("properties", {})
+            geom = feat.get("geometry", {})
+            drain_id = props.get("@id", f"DRN_{idx:05d}")
+            gtype = geom.get("type")
+            coords = geom.get("coordinates", [])
+
+            # Extract representative coordinates and calculate metric length
+            if gtype == "LineString" and len(coords) >= 2:
+                pts = coords
+            elif gtype == "Polygon" and len(coords) > 0:
+                pts = coords[0]
+            elif gtype == "Point" and len(coords) == 2:
+                pts = [coords, coords]
             else:
-                with open(drain_path, "r", encoding="utf-8") as f:
-                    data = json.load(f)
-                features = data.get("features", [])
-                for idx, feat in enumerate(features):
-                    props = feat.get("properties", {})
-                    geom = feat.get("geometry", {})
-                    coords = geom.get("coordinates", [])
-                    deg_len = 0.0
-                    if geom.get("type") == "LineString" and len(coords) >= 2:
-                        for c1, c2 in zip(coords[:-1], coords[1:]):
-                            deg_len += float(np.hypot(c2[0] - c1[0], c2[1] - c1[1]))
-                    if deg_len > 0:
-                        records.append((idx, props, deg_len * 111139.0))
+                pts = []
 
-            logger.info("Building drainage graph from %d conduit vectors", len(records))
+            if pts:
+                lons = [pt[0] for pt in pts]
+                lats = [pt[1] for pt in pts]
+                cen_lon = float(np.mean(lons))
+                cen_lat = float(np.mean(lats))
+                total_l = 0.0
+                for i in range(len(pts) - 1):
+                    dx = (pts[i+1][0] - pts[i][0]) * 111320.0 * cos_lat
+                    dy = (pts[i+1][1] - pts[i][1]) * 110540.0
+                    total_l += float(np.sqrt(dx*dx + dy*dy))
+                length_m = max(20.0, total_l)
+            else:
+                cen_lon, cen_lat, length_m = 80.20, 13.04, 50.0
 
-            for idx, row, raw_len in records:
-                edge_id = f"DRN_{idx:05d}"
-                length_m = max(20.0, raw_len)
-                dia_m = self._infer_cpheeo_diameter(row, idx)
-                zone_no = (idx % 15) + 1
-                mu = self.clogging_model.get_zone_clogging_factor(zone_no)
-                s0 = 0.0020 + (idx % 8) * 0.0004
+            dia_m = self._infer_cpheeo_diameter(props, idx)
+            zone_no = (idx % 15) + 1
+            mu = self.clogging_model.get_zone_clogging_factor(zone_no)
+            s0 = 0.0020 + (idx % 8) * 0.0004
 
-                # Check if conduit is coastal / river outfall (Zone 4, 5, 9, 13 coastal boundary)
-                is_coastal_outfall = zone_no in [4, 5, 9, 13] and (idx % 6 == 0)
-                tidal_stage = self.tidal_engine.compute_tidal_stage_m(t_hours=2.0, storm_surge_m=0.35)
-                invert_elev = 0.85 if is_coastal_outfall else 4.5
-                tidal_throttle = self.tidal_engine.compute_outfall_throttle_factor(invert_elev, tidal_stage) if is_coastal_outfall else 1.0
+            # Check if conduit is coastal / river outfall (Zone 4, 5, 9, 13 coastal boundary)
+            is_coastal_outfall = zone_no in [4, 5, 9, 13] and (idx % 6 == 0)
+            tidal_stage = self.tidal_engine.compute_tidal_stage_m(t_hours=2.0, storm_surge_m=0.35)
+            invert_elev = 0.85 if is_coastal_outfall else 4.5
+            tidal_throttle = self.tidal_engine.compute_outfall_throttle_factor(invert_elev, tidal_stage) if is_coastal_outfall else 1.0
 
-                hydraulics = self.conduit_engine.calculate_circular_pipe(
-                    diameter_m=dia_m,
-                    slope_m_per_m=s0,
-                    mu_clog=mu
-                )
-                effective_cap = round(hydraulics["effective_capacity_m3_s"] * tidal_throttle, 3)
+            hydraulics = self.conduit_engine.calculate_circular_pipe(
+                diameter_m=dia_m,
+                slope_m_per_m=s0,
+                mu_clog=mu
+            )
+            effective_cap = round(hydraulics["effective_capacity_m3_s"] * tidal_throttle, 3)
 
-                self.edges.append({
-                    "edge_id": edge_id,
-                    "zone_no": zone_no,
-                    "length_m": round(length_m, 1),
-                    "diameter_m": dia_m,
-                    "slope_m_per_m": s0,
-                    "clogging_factor": mu,
-                    "is_coastal_outfall": is_coastal_outfall,
-                    "tidal_throttle": round(tidal_throttle, 2),
-                    "effective_capacity_m3_s": effective_cap,
-                    "nominal_capacity_m3_s": hydraulics["nominal_capacity_m3_s"],
-                    "capacity_loss_pct": hydraulics["capacity_loss_pct"]
-                })
+            self.edges.append({
+                "edge_id": edge_id,
+                "drain_id": drain_id,
+                "longitude": round(cen_lon, 6),
+                "latitude": round(cen_lat, 6),
+                "waterway": props.get("waterway", "storm_drain"),
+                "zone_no": zone_no,
+                "length_m": round(length_m, 1),
+                "diameter_m": dia_m,
+                "slope_m_per_m": s0,
+                "clogging_factor": mu,
+                "is_coastal_outfall": is_coastal_outfall,
+                "tidal_throttle": round(tidal_throttle, 2),
+                "effective_capacity_m3_s": effective_cap,
+                "nominal_capacity_m3_s": hydraulics["nominal_capacity_m3_s"],
+                "capacity_loss_pct": hydraulics["capacity_loss_pct"]
+            })
 
-            logger.info("Constructed %d calibrated drainage edges with CPHEEO norms & tidal boundary", len(self.edges))
-        except Exception as e:
-            logger.warning("Using calibrated CPHEEO fallback drainage topology: %s", e)
-            self._build_fallback_topology()
+        logger.info("Constructed %d real drainage edges with CPHEEO norms & tidal boundary", len(self.edges))
 
     def _build_fallback_topology(self):
         """Fallback calibrated topology when raw GeoJSON cannot be accessed."""
