@@ -22,6 +22,7 @@ from .graph_builder import StreetDrainageGraph
 from .surrogate_model import PIGNNSurrogateEngine, HORIZONS_MIN
 from .mass_conservation_loss import MassConservationConstraint
 from .benchmark_validator import BenchmarkValidator
+from .coupling import Layer3Inputs, from_layer1_runoff, from_layer2_backflow, attach_layer2_backflow
 
 # Seamless integration with Layer 0 if available
 try:
@@ -29,7 +30,19 @@ try:
 except ImportError:
     Layer0Pipeline = None
 
+# Seamless integration with Layer 1 if available
+try:
+    from ai_service.layer1.lulc.runoff_generator import SurfaceRunoffGenerator, RunoffResult
+except ImportError:
+    SurfaceRunoffGenerator = None
+    RunoffResult = None
 
+# Seamless integration with Layer 2 if available
+try:
+    from ai_service.layer2.pipeline import Layer2Pipeline, Layer2Result
+except ImportError:
+    Layer2Pipeline = None
+    Layer2Result = None
 
 logger = logging.getLogger(__name__)
 
@@ -70,7 +83,11 @@ class Layer3Pipeline:
         self,
         scenario: str = "michaung",
         clogging_factor: float = 0.35,
-        storm_scale: float = 1.0
+        storm_scale: float = 1.0,
+        layer1_runoff: Optional[Any] = None,
+        use_layer1_coupling: bool = True,
+        layer2_backflow: Optional[Any] = None,
+        use_layer2_coupling: bool = True
     ) -> Layer3Result:
         """
         Executes end-to-end Layer 3 AI surrogate nowcasting across all 6 horizons.
@@ -79,53 +96,134 @@ class Layer3Pipeline:
           scenario: Historical storm scenario ('michaung', 'monsoon', '2015_flood', 'moderate')
           clogging_factor: Solid waste blockage mu_clog in [0.0, 0.85]
           storm_scale: Scaling factor on storm intensity
+          layer1_runoff: Optional pre-computed Layer 1 RunoffResult, Layer3Inputs, or DataFrame.
+          use_layer1_coupling: If True and layer1_runoff is not provided, automatically
+              couples Layer 1 SurfaceRunoffGenerator to provide LULC/soil-adjusted runoff.
+          layer2_backflow: Optional pre-computed Layer 2 Result, backflow vectors, or DataFrame.
+          use_layer2_coupling: If True and layer2_backflow is not provided, automatically
+              couples Layer 2 conduit surcharge simulation to provide physical backflow.
         """
         t_start = time.perf_counter()
 
         n_nodes = len(self.graph.nodes_df)
-        rain_vectors: Dict[int, np.ndarray] = {}
+        forcing_vectors: Dict[int, np.ndarray] = {}
+        is_preprocessed = False
+        source_label = "synthetic"
+        l1_obj_for_l2 = layer1_runoff
 
-        # 1. Retrieve rain rates from Layer 0 or synthesize calibrated profile
-        t0 = time.perf_counter()
-        if Layer0Pipeline is not None:
+        # 1. Check for directly provided Layer 1 runoff inputs
+        if layer1_runoff is not None:
+            if isinstance(layer1_runoff, Layer3Inputs):
+                l3_inp = layer1_runoff
+            else:
+                l3_inp = from_layer1_runoff(layer1_runoff, self.graph)
+            forcing_vectors = l3_inp.runoff_vectors
+            is_preprocessed = l3_inp.is_runoff_preprocessed
+            source_label = l3_inp.source_layer
+
+        # 2. Automatically couple Layer 1 SurfaceRunoffGenerator if available
+        elif use_layer1_coupling and SurfaceRunoffGenerator is not None:
             try:
-                l0 = Layer0Pipeline()
-                l0_res = l0.run(scenario=scenario, mode="auto")
-                df_l0 = l0_res.dataframe
-                for h in HORIZONS_MIN:
-                    col = f"I_T+{h}m_mmh"
-                    if col in df_l0.columns:
-                        arr = df_l0[col].values.astype(np.float32)
-                        rain_vectors[h] = np.resize(arr, n_nodes) * storm_scale
+                base_rain = 85.0 if scenario == "2015_flood" else (65.0 if scenario == "michaung" else 35.0)
+                amc = "AMC_III" if scenario in ("2015_flood", "michaung") else "AMC_II"
+                gen = SurfaceRunoffGenerator(base_dir=self.base_dir)
+                roads_df = self.graph.nodes_df.copy()
+                rr = gen.compute_runoff(
+                    roads_df=roads_df,
+                    rainfall_intensity=base_rain * storm_scale,
+                    amc=amc,
+                    scenario=scenario
+                )
+                l3_inp = from_layer1_runoff(rr, self.graph)
+                forcing_vectors = l3_inp.runoff_vectors
+                is_preprocessed = l3_inp.is_runoff_preprocessed
+                source_label = "layer1"
+                l1_obj_for_l2 = rr
             except Exception as e:
-                logger.warning("Layer 0 pipeline invocation failed, using synthetic rain profile: %s", e)
+                logger.warning("Layer 1 automatic coupling failed, falling back to rainfall: %s", e)
 
-        # Baseline storm profile if Layer 0 was not accessible
-        if not rain_vectors:
-            base_rate = 85.0 if scenario == "2015_flood" else (65.0 if scenario == "michaung" else 35.0)
-            for h in HORIZONS_MIN:
-                pulse = 1.0 + 0.3 * np.sin(h / 30.0)
-                rain_vectors[h] = np.full(n_nodes, base_rate * pulse * storm_scale, dtype=np.float32)
+        # 3. Fallback: Retrieve rain rates from Layer 0 or synthesize calibrated profile
+        if not forcing_vectors:
+            if Layer0Pipeline is not None:
+                try:
+                    l0 = Layer0Pipeline()
+                    l0_res = l0.run(scenario=scenario, mode="auto")
+                    df_l0 = l0_res.dataframe
+                    for h in HORIZONS_MIN:
+                        col = f"I_T+{h}m_mmh"
+                        if col in df_l0.columns:
+                            arr = df_l0[col].values.astype(np.float32)
+                            forcing_vectors[h] = np.resize(arr, n_nodes) * storm_scale
+                    source_label = "layer0"
+                except Exception as e:
+                    logger.warning("Layer 0 pipeline invocation failed, using synthetic rain profile: %s", e)
 
-        t_rain = time.perf_counter() - t0
+            # Baseline storm profile if Layer 0 was not accessible
+            if not forcing_vectors:
+                base_rate = 85.0 if scenario == "2015_flood" else (65.0 if scenario == "michaung" else 35.0)
+                for h in HORIZONS_MIN:
+                    pulse = 1.0 + 0.3 * np.sin(h / 30.0)
+                    forcing_vectors[h] = np.full(n_nodes, base_rate * pulse * storm_scale, dtype=np.float32)
+                source_label = "synthetic"
+            is_preprocessed = False
 
-        # 2. Execute Sub-Second PI-GNN Surrogate
+        # 4. Resolve Layer 2 conduit backflow coupling
+        backflow_vectors: Optional[Dict[int, np.ndarray]] = None
+        l2_label = "none"
+        raw_l2_result = None
+
+        if layer2_backflow is not None:
+            if isinstance(layer2_backflow, dict) and any(isinstance(k, int) for k in layer2_backflow.keys()):
+                backflow_vectors = layer2_backflow
+                l2_label = "direct_vectors"
+            else:
+                raw_l2_result = layer2_backflow
+                backflow_vectors = from_layer2_backflow(layer2_backflow, self.graph)
+                l2_label = "provided_l2"
+        elif use_layer2_coupling and Layer2Pipeline is not None:
+            try:
+                base_rain = 85.0 if scenario == "2015_flood" else (65.0 if scenario == "michaung" else 35.0)
+                l2_pipe = Layer2Pipeline(base_dir=self.base_dir)
+                l2_res = l2_pipe.run(
+                    storm_intensity_mm_hr=base_rain * storm_scale,
+                    clogging_modifier=clogging_factor / 0.35,
+                    layer1_runoff=l1_obj_for_l2
+                )
+                raw_l2_result = l2_res
+                backflow_vectors = from_layer2_backflow(l2_res, self.graph)
+                l2_label = "layer2_coupled"
+            except Exception as e:
+                logger.warning("Layer 2 automatic coupling failed, running without conduit backflow: %s", e)
+
+        # 5. Execute Sub-Second PI-GNN Surrogate
         t0 = time.perf_counter()
         surr_res = self.surrogate.predict_multi_horizon(
-            rain_vectors=rain_vectors,
-            clogging_modifier=clogging_factor / 0.35
+            rain_vectors=forcing_vectors,
+            clogging_modifier=clogging_factor / 0.35,
+            is_runoff_preprocessed=is_preprocessed,
+            backflow_vectors=backflow_vectors
         )
         depth_matrices = surr_res["horizons"]
         t_surr = time.perf_counter() - t0
 
-        # 3. Assemble Enriched Output DataFrame
+        # 6. Assemble Enriched Output DataFrame
         df_out = self.graph.nodes_df.copy()
+        if backflow_vectors is not None:
+            if 60 in backflow_vectors:
+                df_out["backflow_rate_m3_s"] = backflow_vectors[60]
+            elif len(backflow_vectors) > 0:
+                first_h = next(iter(backflow_vectors.keys()))
+                df_out["backflow_rate_m3_s"] = backflow_vectors[first_h]
+            df_out["is_surcharging"] = df_out.get("backflow_rate_m3_s", 0.0) > 0.0
+        elif raw_l2_result is not None:
+            df_out = attach_layer2_backflow(df_out, raw_l2_result, self.graph)
+
         for h in HORIZONS_MIN:
             df_out[f"depth_T+{h}m_cm"] = depth_matrices[h]
             # Flag critical impassability threshold (> 30 cm)
             df_out[f"is_impassable_T+{h}m"] = depth_matrices[h] >= 30.0
 
-        # 4. Cross-Validation against 2015 Ground Truth Survey
+        # 7. Cross-Validation against 2015 Ground Truth Survey
         t0 = time.perf_counter()
         peak_depths = depth_matrices[60]  # T+60m peak
         val_metrics = self.validator.evaluate_predictions(peak_depths, self.graph)
@@ -140,6 +238,10 @@ class Layer3Pipeline:
             "simulated_segments": n_nodes,
             "scenario": scenario,
             "clogging_factor": clogging_factor,
+            "upstream_forcing": source_label,
+            "is_runoff_preprocessed": is_preprocessed,
+            "layer2_coupling": l2_label,
+            "backflow_active": backflow_vectors is not None,
             "validation": val_metrics,
             "horizons_summary": surr_res["metrics"]
         }

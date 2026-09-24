@@ -1,0 +1,19 @@
+{
+  "source_hashes": {
+    "road_geojson": "28c82754fe126baccfbf36401562d6623f2514048dab18c489c4da13bae3be3d",
+    "n12_hgt": "a271e13914210915221b19a63c2613b7dfc9bc062e5b972978a75a3ceb1b01f6",
+    "n13_hgt": "e296dc6e0a1e5568c5534a832e1afdda4a2e1157f17b1f37a126911dbe7b8d52",
+    "drainage_geojson": "80e515a59511f986f4f8abb0773b97e514dca6dcbf3d8e17a66f370be358e21a",
+    "pipe_attributes_xlsx": "e2f9828f3333a5e58a128be2a923f5e5eab1d80a51da0930cb04cad08677a3f8"
+  },
+  "nodes_count": 7894,
+  "elevation_min": -4.0,
+  "elevation_max": 59.0,
+  "elevation_mean": 12.30884215860147,
+  "slope_min": 0.0,
+  "slope_max": 0.3024341240805854,
+  "slope_mean": 0.037421078790542545,
+  "capacity_min": 0.0076,
+  "capacity_max": 17.4775,
+  "capacity_mean": 0.9382483278439321
+}
