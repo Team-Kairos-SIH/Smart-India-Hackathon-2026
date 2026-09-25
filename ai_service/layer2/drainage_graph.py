@@ -6,14 +6,12 @@ Constructs directed multigraph G = (V, E) of Chennai's subsurface stormwater dra
   - Attributes: Length L, Diameter/Span D, Slope S_0, Manning Roughness n_eff, Clogging mu_clog
 """
 
-import logging
-from pathlib import Path
-from typing import Any, Dict, List, Optional, Tuple
+import os
 import json
-try:
-    import geopandas as gpd
-except ImportError:
-    gpd = None
+import logging
+import math
+from pathlib import Path
+from typing import Any, Dict, List, Optional, Set, Tuple
 import pandas as pd
 import numpy as np
 
@@ -78,7 +76,10 @@ class TidalBoundaryEngine:
 
 
 class DrainageGraphNetwork:
-    """Manages 1D topological graph representation of Chennai stormwater conduits with CPHEEO norms & tidal boundary."""
+    """
+    Manages 1D topological multigraph representation of real Chennai stormwater conduits
+    with CPHEEO standards, DEM terrain gradients, real GCC civic clogging, and tidal boundaries.
+    """
 
     def __init__(self, base_dir: Optional[Path] = None):
         self.base_dir = base_dir or Path(__file__).resolve().parent.parent.parent
@@ -87,6 +88,8 @@ class DrainageGraphNetwork:
         self.tidal_engine = TidalBoundaryEngine()
         self.nodes: Dict[str, Dict[str, Any]] = {}
         self.edges: List[Dict[str, Any]] = []
+        self.receiving_channels: List[Dict[str, Any]] = []
+        self.manhole_nodes: List[Dict[str, Any]] = []
         self._build_network()
 
     @staticmethod
@@ -94,135 +97,307 @@ class DrainageGraphNetwork:
         """Allows municipal engineers to set calibrated pipe dimensions."""
         CMWSSB_FIELD_OVERRIDE_REGISTRY[edge_id] = float(diameter_m)
 
-    def _infer_cpheeo_diameter(self, row: Any, idx: int) -> float:
-        """Assigns representative diameter grounded in IRC:SP:50 / CPHEEO municipal guidelines."""
-        # 1. Check if direct field override exists
-        edge_id = f"DRN_{idx:05d}"
-        if edge_id in CMWSSB_FIELD_OVERRIDE_REGISTRY:
-            return CMWSSB_FIELD_OVERRIDE_REGISTRY[edge_id]
+    def _locate_drainage_geojson(self) -> Path:
+        """Locates the real drainage network GeoJSON using configurable paths."""
+        candidates = []
+        env_root = os.environ.get("LAYER2_DATA_ROOT")
+        if env_root:
+            env_path = Path(env_root)
+            candidates.append(env_path / "oms_network" / "drainage network.geojson")
+            candidates.append(env_path / "drainage network.geojson")
+            candidates.append(env_path / "drainage_network.geojson")
 
-        # 2. Check GeoJSON attributes for road type or pipe diameter
-        for col in ["diameter", "dia_mm", "pipe_dia", "DIAMETER"]:
-            if col in row and pd.notna(row[col]):
-                try:
-                    val = float(row[col])
-                    return val / 1000.0 if val > 10.0 else val
-                except (ValueError, TypeError):
-                    pass
+        candidates.append(self.base_dir.parent / "drainage_data" / "oms_network" / "drainage network.geojson")
+        candidates.append(self.base_dir.parent / "SIH_Real_Data" / "drainage_data" / "oms_network" / "drainage network.geojson")
+        candidates.append(self.base_dir / "ai_service" / "data" / "network" / "drainage_network.geojson")
 
-        # 3. Categorize by CPHEEO road hierarchy and catchment tributary rank
-        # Primary arterial storm canals & coastal outfalls (1800mm)
-        if idx % 12 == 0:
-            return CPHEEO_PIPE_HIERARCHY["arterial"]
-        # Sub-arterial trunk corridors (1200mm)
-        elif idx % 4 == 0:
-            return CPHEEO_PIPE_HIERARCHY["sub_arterial"]
-        # Ward collector drains (900mm)
-        elif idx % 2 == 0:
-            return CPHEEO_PIPE_HIERARCHY["collector"]
-        # Tertiary street branch drains (600mm)
-        return CPHEEO_PIPE_HIERARCHY["local"]
+        try:
+            candidates.append(find_dataset_path(self.base_dir, "drainage network.geojson"))
+        except Exception:
+            pass
+
+        try:
+            candidates.append(find_dataset_path(self.base_dir, "drainage_network.geojson"))
+        except Exception:
+            pass
+
+        for p in candidates:
+            if p and p.is_file():
+                return p.resolve()
+
+        raise FileNotFoundError(
+            "REAL DRAINAGE NETWORK UNAVAILABLE: Required real dataset missing. "
+            f"Searched candidate locations: {[str(c) for c in candidates[:5]]}. "
+            "Please configure the LAYER2_DATA_ROOT environment variable. "
+            "Silent synthetic fallback is prohibited on branch feature/layer2-real-data."
+        )
+
+    def _infer_diameter_from_road(self, hw_class: str) -> Tuple[float, str]:
+        """Maps road classification to CPHEEO / IRC:SP:50 diameter proxy with explicit provenance."""
+        hw = str(hw_class).lower()
+        if hw in ["motorway", "trunk", "primary", "primary_link"]:
+            return CPHEEO_PIPE_HIERARCHY["arterial"], "PROXY (CPHEEO Arterial Standard)"
+        elif hw in ["secondary", "secondary_link"]:
+            return CPHEEO_PIPE_HIERARCHY["sub_arterial"], "PROXY (CPHEEO Sub-Arterial Standard)"
+        elif hw in ["tertiary", "tertiary_link"]:
+            return CPHEEO_PIPE_HIERARCHY["collector"], "PROXY (CPHEEO Collector Standard)"
+        elif hw in ["residential", "living_street", "service", "unclassified"]:
+            return CPHEEO_PIPE_HIERARCHY["local"], "PROXY (CPHEEO Local Street Standard)"
+        return CPHEEO_PIPE_HIERARCHY["local"], "PROXY_DEFAULT (Unassociated Drain - Local Branch Baseline)"
 
     def _build_network(self):
-        """Construct graph from real drainage network GeoJSON and DEM attributes."""
-        drain_path = self.base_dir / "ai_service" / "data" / "network" / "drainage_network.geojson"
-        if not drain_path.exists():
-            drain_path = self.base_dir / "Datasets" / "network" / "drainage_network.geojson"
-        if not drain_path.exists():
-            try:
-                drain_path = find_dataset_path(self.base_dir, "drainage_network.geojson")
-            except Exception:
-                pass
-
-        if not drain_path.exists():
-            raise FileNotFoundError(
-                "REAL DRAINAGE NETWORK UNAVAILABLE: Required real dataset missing at "
-                "'ai_service/data/network/drainage_network.geojson'. "
-                "Silent synthetic fallback is prohibited in the real operational path."
-            )
-
+        """Construct genuine multigraph from real drainage network GeoJSON and DEM attributes."""
+        drain_path = self._locate_drainage_geojson()
         logger.info("Building real drainage graph from: %s", drain_path)
+
         with open(drain_path, "r", encoding="utf-8") as f:
             drain_data = json.load(f)
 
         features = drain_data.get("features", [])
-        if len(features) != 825:
-            logger.warning("Expected 825 drainage features, found %d", len(features))
 
-        cos_lat = np.cos(np.radians(13.04))
+        # Load road-DEM association table if available
+        drain_road_lookup: Dict[str, Dict[str, Any]] = {}
+        road_coords = np.empty((0, 2))
+        road_elevs = np.empty(0)
+        road_slopes = np.empty(0)
+        road_zones = np.empty(0, dtype=int)
+        road_hw_classes: List[str] = []
 
-        for idx, feat in enumerate(features):
+        try:
+            roads_path = find_dataset_path(self.base_dir, "chennai_roads_with_dem_attributes.csv")
+            df_roads = pd.read_csv(roads_path)
+
+            try:
+                master_path = find_dataset_path(self.base_dir, "Datasets_master.csv")
+                df_master = pd.read_csv(master_path, encoding="utf-16")
+                df_roads = pd.merge(df_roads, df_master[["segment_id", "zone_no"]], on="segment_id", how="left")
+            except Exception:
+                pass
+
+            if "source_drain_id" in df_roads.columns:
+                for drain_id, grp in df_roads.groupby("source_drain_id"):
+                    drain_road_lookup[str(drain_id)] = {
+                        "count": len(grp),
+                        "mean_elev": float(grp["elevation_ground_m"].mean()) if "elevation_ground_m" in grp.columns else 6.0,
+                        "mean_slope": float(grp["terrain_slope_m_per_m"].mean()) if "terrain_slope_m_per_m" in grp.columns else 0.002,
+                        "highway_class": str(grp["source_highway_class"].mode().iloc[0]) if "source_highway_class" in grp.columns and not grp["source_highway_class"].empty else "residential",
+                        "zone_no": int(grp["zone_no"].mode().iloc[0]) if "zone_no" in grp.columns and grp["zone_no"].notna().any() else 8
+                    }
+
+            if not df_roads.empty and "longitude" in df_roads.columns and "latitude" in df_roads.columns:
+                road_coords = df_roads[["longitude", "latitude"]].to_numpy()
+                road_elevs = df_roads["elevation_ground_m"].to_numpy() if "elevation_ground_m" in df_roads.columns else np.full(len(df_roads), 6.0)
+                road_slopes = df_roads["terrain_slope_m_per_m"].to_numpy() if "terrain_slope_m_per_m" in df_roads.columns else np.full(len(df_roads), 0.002)
+                road_zones = df_roads["zone_no"].fillna(8).astype(int).to_numpy() if "zone_no" in df_roads.columns else np.full(len(df_roads), 8, dtype=int)
+                road_hw_classes = df_roads["source_highway_class"].fillna("residential").tolist() if "source_highway_class" in df_roads.columns else ["residential"] * len(df_roads)
+        except Exception as e:
+            logger.warning("Could not load road-DEM association table: %s", e)
+
+        # Categorize GeoJSON features
+        st_conduits = []
+        manhole_points_coords = set()
+
+        for feat in features:
+            props = feat.get("properties", {})
+            geom = feat.get("geometry", {})
+            gtype = geom.get("type")
+            ww = str(props.get("waterway", "")).lower()
+
+            if gtype == "Point" and (props.get("man_made") == "manhole" or props.get("manhole") in ["drain", "sewer"]):
+                coords = geom.get("coordinates", [])
+                if len(coords) >= 2:
+                    pt_key = (round(coords[0], 5), round(coords[1], 5))
+                    manhole_points_coords.add(pt_key)
+                self.manhole_nodes.append(feat)
+
+            elif gtype == "LineString":
+                if ww in ["drain", "ditch"]:
+                    st_conduits.append(feat)
+                elif ww in ["canal", "stream", "river"]:
+                    self.receiving_channels.append(feat)
+
+        cos_lat = math.cos(math.radians(13.04))
+
+        for idx, feat in enumerate(st_conduits):
             edge_id = f"DRN_{idx:05d}"
             props = feat.get("properties", {})
             geom = feat.get("geometry", {})
-            drain_id = props.get("@id", f"DRN_{idx:05d}")
-            gtype = geom.get("type")
+            drain_id = str(props.get("@id", edge_id))
             coords = geom.get("coordinates", [])
 
-            # Extract representative coordinates and calculate metric length
-            if gtype == "LineString" and len(coords) >= 2:
-                pts = coords
-            elif gtype == "Polygon" and len(coords) > 0:
-                pts = coords[0]
-            elif gtype == "Point" and len(coords) == 2:
-                pts = [coords, coords]
+            if len(coords) < 2:
+                continue
+
+            # Snapped endpoints (~5 decimal places / ~1m precision)
+            start_coord = coords[0]
+            end_coord = coords[-1]
+            u_key = (round(start_coord[0], 5), round(start_coord[1], 5))
+            v_key = (round(end_coord[0], 5), round(end_coord[1], 5))
+            u_id = f"ND_{u_key[0]:.5f}_{u_key[1]:.5f}"
+            v_id = f"ND_{v_key[0]:.5f}_{v_key[1]:.5f}"
+
+            # Geodesic length computation
+            total_l = 0.0
+            for i in range(len(coords) - 1):
+                dx = (coords[i+1][0] - coords[i][0]) * 111320.0 * cos_lat
+                dy = (coords[i+1][1] - coords[i][1]) * 110540.0
+                total_l += math.sqrt(dx*dx + dy*dy)
+            length_m = max(5.0, round(total_l, 1))
+
+            cen_lon = float(np.mean([pt[0] for pt in coords]))
+            cen_lat = float(np.mean([pt[1] for pt in coords]))
+
+            # Road Association & Terrain Attributes
+            if drain_id in drain_road_lookup:
+                info = drain_road_lookup[drain_id]
+                z_ground = round(info["mean_elev"], 2)
+                s0 = max(0.0005, min(0.025, round(info["mean_slope"], 5)))
+                zone_no = info["zone_no"]
+                hw_class = info["highway_class"]
+                dia_m, dia_prov = self._infer_diameter_from_road(hw_class)
+                z_ground_prov = "DERIVED_FROM_REAL_DEM (source_drain_id Road Match)"
+                slope_prov = "PROXY (Surface Terrain Gradient from DEM)"
+                zone_prov = "REAL_ASSOCIATION (Layer 1 source_drain_id Match)"
+                slope_uncertain = False
+            elif len(road_coords) > 0:
+                dists_sq = (road_coords[:, 0] - cen_lon)**2 + (road_coords[:, 1] - cen_lat)**2
+                min_idx = int(np.argmin(dists_sq))
+                z_ground = round(float(road_elevs[min_idx]), 2)
+                s0 = max(0.0005, min(0.025, round(float(road_slopes[min_idx]), 5)))
+                zone_no = int(road_zones[min_idx])
+                hw_class = road_hw_classes[min_idx]
+                dia_m, dia_prov = self._infer_diameter_from_road(hw_class)
+                z_ground_prov = "DERIVED_FROM_REAL_DEM (Nearest Road Segment Match)"
+                slope_prov = "PROXY (Surface Terrain Gradient from DEM)"
+                zone_prov = "SPATIAL_PROXY (Nearest Road Segment Match)"
+                slope_uncertain = False
             else:
-                pts = []
+                z_ground = 6.0
+                s0 = 0.002
+                zone_no = 8
+                dia_m = CPHEEO_PIPE_HIERARCHY["local"]
+                dia_prov = "PROXY_DEFAULT (Unassociated Drain - Local Branch Baseline)"
+                z_ground_prov = "ASSUMED (Default Domain Elevation)"
+                slope_prov = "PROXY_FLAT_TERRAIN_MINIMUM"
+                zone_prov = "UNKNOWN_FALLBACK"
+                slope_uncertain = True
 
-            if pts:
-                lons = [pt[0] for pt in pts]
-                lats = [pt[1] for pt in pts]
-                cen_lon = float(np.mean(lons))
-                cen_lat = float(np.mean(lats))
-                total_l = 0.0
-                for i in range(len(pts) - 1):
-                    dx = (pts[i+1][0] - pts[i][0]) * 111320.0 * cos_lat
-                    dy = (pts[i+1][1] - pts[i][1]) * 110540.0
-                    total_l += float(np.sqrt(dx*dx + dy*dy))
-                length_m = max(20.0, total_l)
-            else:
-                cen_lon, cen_lat, length_m = 80.20, 13.04, 50.0
+            # Manual field override takes highest precedence
+            if edge_id in CMWSSB_FIELD_OVERRIDE_REGISTRY:
+                dia_m = CMWSSB_FIELD_OVERRIDE_REGISTRY[edge_id]
+                dia_prov = "CALIBRATED_FIELD_OVERRIDE"
+            elif drain_id in CMWSSB_FIELD_OVERRIDE_REGISTRY:
+                dia_m = CMWSSB_FIELD_OVERRIDE_REGISTRY[drain_id]
+                dia_prov = "CALIBRATED_FIELD_OVERRIDE"
 
-            dia_m = self._infer_cpheeo_diameter(props, idx)
-            zone_no = (idx % 15) + 1
-            mu = self.clogging_model.get_zone_clogging_factor(zone_no)
-            s0 = 0.0020 + (idx % 8) * 0.0004
+            # Structural descriptors
+            tunnel_tag = props.get("tunnel")
+            layer_tag = props.get("layer")
+            is_enclosed = bool(tunnel_tag in ["culvert", "covered", "yes"] or layer_tag in ["-1", "-2"] or props.get("covered") == "yes")
+            cross_section = "BOX_DRAIN" if (is_enclosed and dia_m >= 1.80) else ("CIRCULAR_RCC" if is_enclosed else "OPEN_MASONRY_CHANNEL")
 
-            # Check if conduit is coastal / river outfall (Zone 4, 5, 9, 13 coastal boundary)
-            is_coastal_outfall = zone_no in [4, 5, 9, 13] and (idx % 6 == 0)
+            # Coastal outfall determination (GCC Coastal Zones 4, 5, 9, 13 discharging towards Bay of Bengal)
+            is_coastal_outfall = bool(zone_no in [4, 5, 9, 13] and cen_lon >= 80.25)
             tidal_stage = self.tidal_engine.compute_tidal_stage_m(t_hours=2.0, storm_surge_m=0.35)
-            invert_elev = 0.85 if is_coastal_outfall else 4.5
-            tidal_throttle = self.tidal_engine.compute_outfall_throttle_factor(invert_elev, tidal_stage) if is_coastal_outfall else 1.0
+            z_invert = max(0.20, z_ground - 1.20) if is_coastal_outfall else max(0.50, z_ground - dia_m - 1.00)
+            tidal_throttle = self.tidal_engine.compute_outfall_throttle_factor(z_invert, tidal_stage) if is_coastal_outfall else 1.0
 
-            hydraulics = self.conduit_engine.calculate_circular_pipe(
-                diameter_m=dia_m,
-                slope_m_per_m=s0,
-                mu_clog=mu
-            )
+            # Real GCC clogging factor
+            mu = self.clogging_model.get_zone_clogging_factor(zone_no)
+
+            # Hydraulic conveyance calculation
+            if cross_section == "BOX_DRAIN":
+                hydraulics = self.conduit_engine.calculate_box_culvert(
+                    width_m=2.0,
+                    height_m=1.5,
+                    slope_m_per_m=s0,
+                    mu_clog=mu
+                )
+            else:
+                hydraulics = self.conduit_engine.calculate_circular_pipe(
+                    diameter_m=dia_m,
+                    slope_m_per_m=s0,
+                    mu_clog=mu
+                )
+
             effective_cap = round(hydraulics["effective_capacity_m3_s"] * tidal_throttle, 3)
 
-            self.edges.append({
+            # Build edge record
+            edge_record = {
                 "edge_id": edge_id,
                 "drain_id": drain_id,
+                "from_node": u_id,
+                "to_node": v_id,
                 "longitude": round(cen_lon, 6),
                 "latitude": round(cen_lat, 6),
-                "waterway": props.get("waterway", "storm_drain"),
+                "waterway": props.get("waterway", "drain"),
+                "is_enclosed": is_enclosed,
+                "cross_section": cross_section,
+                "structural_tags": {
+                    "tunnel": tunnel_tag,
+                    "layer": layer_tag,
+                    "covered": props.get("covered")
+                },
                 "zone_no": zone_no,
-                "length_m": round(length_m, 1),
+                "length_m": length_m,
                 "diameter_m": dia_m,
                 "slope_m_per_m": s0,
+                "slope_direction_uncertain": slope_uncertain,
+                "z_ground_m": z_ground,
+                "z_invert_m": round(z_invert, 2),
                 "clogging_factor": mu,
                 "is_coastal_outfall": is_coastal_outfall,
                 "tidal_throttle": round(tidal_throttle, 2),
                 "effective_capacity_m3_s": effective_cap,
                 "nominal_capacity_m3_s": hydraulics["nominal_capacity_m3_s"],
-                "capacity_loss_pct": hydraulics["capacity_loss_pct"]
-            })
+                "capacity_loss_pct": hydraulics["capacity_loss_pct"],
+                "provenance": {
+                    "length": "DERIVED_FROM_REAL_GEOMETRY",
+                    "diameter": dia_prov,
+                    "ground_elevation": z_ground_prov,
+                    "terrain_slope": slope_prov,
+                    "pipe_bed_slope": "NOT_SURVEYED (Using Terrain Slope Proxy)",
+                    "invert_elevation": "ASSUMED (CPHEEO Standard Burial Depth Heuristic; Not Surveyed)",
+                    "clogging": "REAL_GCC_DATA",
+                    "zone": zone_prov
+                }
+            }
+            self.edges.append(edge_record)
 
-        logger.info("Constructed %d real drainage edges with CPHEEO norms & tidal boundary", len(self.edges))
+            # Node creation and snapping
+            if u_id not in self.nodes:
+                self.nodes[u_id] = {
+                    "node_id": u_id,
+                    "longitude": u_key[0],
+                    "latitude": u_key[1],
+                    "z_ground_m": z_ground,
+                    "is_outfall": False,
+                    "is_manhole": u_key in manhole_points_coords,
+                    "connected_edges": []
+                }
+            self.nodes[u_id]["connected_edges"].append(edge_id)
+
+            if v_id not in self.nodes:
+                self.nodes[v_id] = {
+                    "node_id": v_id,
+                    "longitude": v_key[0],
+                    "latitude": v_key[1],
+                    "z_ground_m": z_ground,
+                    "is_outfall": is_coastal_outfall,
+                    "is_manhole": v_key in manhole_points_coords,
+                    "connected_edges": []
+                }
+            self.nodes[v_id]["connected_edges"].append(edge_id)
+            if is_coastal_outfall:
+                self.nodes[v_id]["is_outfall"] = True
+
+        logger.info(
+            "Constructed real Chennai drainage multigraph: %d conduit edges, %d nodes, %d receiving channels",
+            len(self.edges), len(self.nodes), len(self.receiving_channels)
+        )
 
     def _build_fallback_topology(self):
-        """Fallback calibrated topology when raw GeoJSON cannot be accessed."""
+        """Isolated legacy fallback method; never invoked in the real-data production path."""
         for i in range(825):
             z = (i % 15) + 1
             mu = self.clogging_model.get_zone_clogging_factor(z)
@@ -255,6 +430,8 @@ class DrainageGraphNetwork:
 
         return {
             "total_conduits": len(self.edges),
+            "total_nodes": len(self.nodes),
+            "total_receiving_channels": len(self.receiving_channels),
             "total_network_length_km": round(sum(lengths) / 1000.0, 2),
             "total_effective_discharge_m3_s": round(sum(caps), 2),
             "mean_clogging_loss_pct": round(float(np.mean(losses)), 1),
