@@ -46,9 +46,11 @@ class TestSolidWasteCloggingModel(unittest.TestCase):
         self.assertGreaterEqual(increased_mu, base_mu)
         self.assertLessEqual(increased_mu, 0.85)
 
-        # Zero modifier gives zero clogging
+        # Zero modifier clamps to baseline minimum clogging floor (0.05)
         zero_mu = self.model.get_zone_clogging_factor(10, global_modifier=0.0)
-        self.assertEqual(zero_mu, 0.0)
+        self.assertEqual(zero_mu, 0.05)
+        self.assertGreaterEqual(zero_mu, 0.05)
+        self.assertLessEqual(zero_mu, 0.85)
 
     def test_04_conduit_penalties_formulation(self):
         """Verify effective area A_eff = A0*(1-mu) and roughness n_eff = n0*(1+1.8*mu)."""
@@ -66,13 +68,14 @@ class TestSolidWasteCloggingModel(unittest.TestCase):
         self.assertAlmostEqual(n_eff, nominal_n * (1.0 + 1.8 * mu), places=4)
 
     def test_05_extreme_clipping_bounds(self):
-        """Out-of-bound clogging factors must be clamped to [0.0, 0.85]."""
+        """Out-of-bound clogging factors must be clamped to [0.05, 0.85]."""
         a_eff, n_eff = self.model.apply_conduit_penalties(1.0, 0.015, mu_clog=1.5)
         self.assertAlmostEqual(a_eff, 1.0 * (1.0 - 0.85), places=3)
+        self.assertAlmostEqual(n_eff, 0.015 * (1.0 + 1.8 * 0.85), places=4)
 
         a_eff_neg, n_eff_neg = self.model.apply_conduit_penalties(1.0, 0.015, mu_clog=-0.5)
-        self.assertAlmostEqual(a_eff_neg, 1.0, places=3)
-        self.assertAlmostEqual(n_eff_neg, 0.015, places=4)
+        self.assertAlmostEqual(a_eff_neg, 1.0 * (1.0 - 0.05), places=3)
+        self.assertAlmostEqual(n_eff_neg, 0.015 * (1.0 + 1.8 * 0.05), places=4)
 
 
 if __name__ == "__main__":
