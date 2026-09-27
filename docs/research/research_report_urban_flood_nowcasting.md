@@ -110,10 +110,10 @@ $$d_{\text{street}}(t) = \frac{\int (Q_{\text{surface}} + Q_{\text{backflow}} - 
 
 ---
 
-### 4. Physics-Informed AI Surrogate (PI-GNN) for Sub-Second Latency
+### 4. Physics-Informed AI Surrogate (Physics-Informed Topological Graph Surrogate) for Sub-Second Latency
 
 - **The Problem:** Standard 2D solvers (SWMM, TUFLOW) take 45–90 minutes to compute an entire urban basin, failing the requirement of real-time 0–3h nowcasting.
-- **The Solution:** A **Physics-Informed Graph Neural Network (PI-GNN)**:
+- **The Solution:** A **Physics-Informed Topological Graph Surrogate**:
   - Architecture: Relational Graph Convolutional Network (R-GCN) message passing over the drainage and street graph.
   - Loss Function: Enforces mass conservation $\nabla \cdot Q = \frac{\partial V}{\partial t}$ directly in training.
   - **Inference Speed:** **$<350\text{ milliseconds}$** across 10,000+ streets, enabling instantaneous re-computation whenever new radar frames arrive.

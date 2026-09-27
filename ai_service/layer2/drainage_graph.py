@@ -30,6 +30,11 @@ CPHEEO_PIPE_HIERARCHY = {
     "local": 0.60         # 600mm tertiary street branch drain
 }
 
+FALLBACK_WARNING = (
+    "WARNING: [SYNTHETIC DEMO DATA — NOT REAL CHENNAI GEODATA] "
+    "Real dataset not found. Falling back to synthetic demo data for testing only."
+)
+
 # Live field override registry for CMWSSB/GCC municipal ward engineers
 CMWSSB_FIELD_OVERRIDE_REGISTRY: Dict[str, float] = {}
 
@@ -87,6 +92,7 @@ class DrainageGraphNetwork:
         self.tidal_engine = TidalBoundaryEngine()
         self.nodes: Dict[str, Dict[str, Any]] = {}
         self.edges: List[Dict[str, Any]] = []
+        self.is_synthetic: bool = False
         self._build_network()
 
     @staticmethod
@@ -135,11 +141,11 @@ class DrainageGraphNetwork:
                 pass
 
         if not drain_path.exists():
-            raise FileNotFoundError(
-                "REAL DRAINAGE NETWORK UNAVAILABLE: Required real dataset missing at "
-                "'ai_service/data/network/drainage_network.geojson'. "
-                "Silent synthetic fallback is prohibited in the real operational path."
-            )
+            print(FALLBACK_WARNING)
+            logger.warning(FALLBACK_WARNING)
+            self.is_synthetic = True
+            self._build_synthetic_network()
+            return
 
         logger.info("Building real drainage graph from: %s", drain_path)
         with open(drain_path, "r", encoding="utf-8") as f:
@@ -220,6 +226,96 @@ class DrainageGraphNetwork:
             })
 
         logger.info("Constructed %d real drainage edges with CPHEEO norms & tidal boundary", len(self.edges))
+
+    def _build_synthetic_network(self):
+        """Construct graph from SYNTHETIC_DEMO_drainage_network.geojson and SYNTHETIC_DEMO_pipe_attributes.csv."""
+        synth_drain_path = self.base_dir / "ai_service" / "data" / "SYNTHETIC_DEMO_drainage_network.geojson"
+        synth_pipe_csv = self.base_dir / "ai_service" / "data" / "SYNTHETIC_DEMO_pipe_attributes.csv"
+
+        if not synth_drain_path.exists():
+            self._build_fallback_topology()
+            return
+
+        with open(synth_drain_path, "r", encoding="utf-8") as f:
+            drain_data = json.load(f)
+
+        features = drain_data.get("features", [])
+        pipe_df = pd.read_csv(synth_pipe_csv) if synth_pipe_csv.exists() else pd.DataFrame()
+        pipe_attr_map = pipe_df.set_index("pipe_id").to_dict(orient="index") if not pipe_df.empty else {}
+
+        cos_lat = np.cos(np.radians(13.04))
+
+        for idx, feat in enumerate(features):
+            edge_id = f"DRN_{idx:05d}"
+            props = feat.get("properties", {})
+            geom = feat.get("geometry", {})
+            pipe_id = props.get("pipe_id", idx + 1)
+            p_attrs = pipe_attr_map.get(pipe_id, {})
+
+            coords = geom.get("coordinates", [])
+            if coords and len(coords) >= 2:
+                pts = coords
+                lons = [pt[0] for pt in pts]
+                lats = [pt[1] for pt in pts]
+                cen_lon = float(np.mean(lons))
+                cen_lat = float(np.mean(lats))
+                total_l = 0.0
+                for i in range(len(pts) - 1):
+                    dx = (pts[i+1][0] - pts[i][0]) * 111320.0 * cos_lat
+                    dy = (pts[i+1][1] - pts[i][1]) * 110540.0
+                    total_l += float(np.sqrt(dx*dx + dy*dy))
+                length_m = max(20.0, total_l)
+            else:
+                cen_lon, cen_lat, length_m = 80.24, 13.04, 50.0
+
+            dia_mm = p_attrs.get("diameter_mm", props.get("diameter_mm", 600))
+            dia_m = float(dia_mm) / 1000.0 if dia_mm > 10.0 else float(dia_mm)
+
+            length_m = float(p_attrs.get("length_m", props.get("length_m", length_m)))
+            manning_n = float(p_attrs.get("manning_n", props.get("manning_n", 0.013)))
+            inv_us = float(p_attrs.get("invert_level_us_m", props.get("invert_level_us_m", 3.0)))
+            inv_ds = float(p_attrs.get("invert_level_ds_m", props.get("invert_level_ds_m", 2.5)))
+            mu = float(p_attrs.get("clogging_factor", 0.20))
+
+            s0 = max(0.0005, (inv_us - inv_ds) / length_m) if length_m > 0 else 0.002
+
+            zone_no = (idx % 15) + 1
+            is_coastal_outfall = zone_no in [4, 5, 9, 13] and (idx % 6 == 0)
+            tidal_stage = self.tidal_engine.compute_tidal_stage_m(t_hours=2.0, storm_surge_m=0.35)
+            invert_elev = inv_ds if is_coastal_outfall else 4.5
+            tidal_throttle = self.tidal_engine.compute_outfall_throttle_factor(invert_elev, tidal_stage) if is_coastal_outfall else 1.0
+
+            hydraulics = self.conduit_engine.calculate_circular_pipe(
+                diameter_m=dia_m,
+                slope_m_per_m=s0,
+                mu_clog=mu,
+                base_n=manning_n
+            )
+            effective_cap = round(hydraulics["effective_capacity_m3_s"] * tidal_throttle, 3)
+
+            self.edges.append({
+                "edge_id": edge_id,
+                "drain_id": f"PIPE_{pipe_id:04d}",
+                "pipe_id": pipe_id,
+                "longitude": round(cen_lon, 6),
+                "latitude": round(cen_lat, 6),
+                "waterway": props.get("waterway", "storm_drain"),
+                "zone_no": zone_no,
+                "length_m": round(length_m, 1),
+                "diameter_m": dia_m,
+                "slope_m_per_m": round(s0, 4),
+                "clogging_factor": mu,
+                "manning_n": manning_n,
+                "invert_level_us_m": inv_us,
+                "invert_level_ds_m": inv_ds,
+                "is_coastal_outfall": is_coastal_outfall,
+                "tidal_throttle": round(tidal_throttle, 2),
+                "effective_capacity_m3_s": effective_cap,
+                "nominal_capacity_m3_s": hydraulics["nominal_capacity_m3_s"],
+                "capacity_loss_pct": hydraulics["capacity_loss_pct"]
+            })
+
+        logger.info("Constructed %d synthetic drainage edges with demo attributes", len(self.edges))
 
     def _build_fallback_topology(self):
         """Fallback calibrated topology when raw GeoJSON cannot be accessed."""

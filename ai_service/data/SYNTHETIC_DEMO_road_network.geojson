@@ -1,0 +1,1505 @@
+{
+  "type": "FeatureCollection",
+  "features": [
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
+          [
+            80.2,
+            13.0
+          ],
+          [
+            80.216,
+            13.0
+          ]
+        ]
+      },
+      "properties": {
+        "segment_id": 1,
+        "road_class": "motorway",
+        "elevation_ground_m": 12.9,
+        "terrain_slope_m_per_m": 0.0013,
+        "effective_drain_capacity_cumecs": 1.4355,
+        "latitude": 13.0,
+        "longitude": 80.208
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
+          [
+            80.216,
+            13.0
+          ],
+          [
+            80.232,
+            13.0
+          ]
+        ]
+      },
+      "properties": {
+        "segment_id": 2,
+        "road_class": "primary",
+        "elevation_ground_m": 10.7,
+        "terrain_slope_m_per_m": 0.0013,
+        "effective_drain_capacity_cumecs": 1.081,
+        "latitude": 13.0,
+        "longitude": 80.224
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
+          [
+            80.232,
+            13.0
+          ],
+          [
+            80.248,
+            13.0
+          ]
+        ]
+      },
+      "properties": {
+        "segment_id": 3,
+        "road_class": "secondary",
+        "elevation_ground_m": 8.5,
+        "terrain_slope_m_per_m": 0.0013,
+        "effective_drain_capacity_cumecs": 0.6565,
+        "latitude": 13.0,
+        "longitude": 80.24
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
+          [
+            80.248,
+            13.0
+          ],
+          [
+            80.264,
+            13.0
+          ]
+        ]
+      },
+      "properties": {
+        "segment_id": 4,
+        "road_class": "residential",
+        "elevation_ground_m": 6.3,
+        "terrain_slope_m_per_m": 0.0013,
+        "effective_drain_capacity_cumecs": 0.2376,
+        "latitude": 13.0,
+        "longitude": 80.256
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
+          [
+            80.264,
+            13.0
+          ],
+          [
+            80.28,
+            13.0
+          ]
+        ]
+      },
+      "properties": {
+        "segment_id": 5,
+        "road_class": "motorway",
+        "elevation_ground_m": 4.1,
+        "terrain_slope_m_per_m": 0.0013,
+        "effective_drain_capacity_cumecs": 1.32,
+        "latitude": 13.0,
+        "longitude": 80.272
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
+          [
+            80.2,
+            13.016
+          ],
+          [
+            80.216,
+            13.016
+          ]
+        ]
+      },
+      "properties": {
+        "segment_id": 6,
+        "road_class": "primary",
+        "elevation_ground_m": 13.14,
+        "terrain_slope_m_per_m": 0.0013,
+        "effective_drain_capacity_cumecs": 1.0005,
+        "latitude": 13.016,
+        "longitude": 80.208
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
+          [
+            80.216,
+            13.016
+          ],
+          [
+            80.232,
+            13.016
+          ]
+        ]
+      },
+      "properties": {
+        "segment_id": 7,
+        "road_class": "secondary",
+        "elevation_ground_m": 10.94,
+        "terrain_slope_m_per_m": 0.0013,
+        "effective_drain_capacity_cumecs": 0.611,
+        "latitude": 13.016,
+        "longitude": 80.224
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
+          [
+            80.232,
+            13.016
+          ],
+          [
+            80.248,
+            13.016
+          ]
+        ]
+      },
+      "properties": {
+        "segment_id": 8,
+        "road_class": "residential",
+        "elevation_ground_m": 8.74,
+        "terrain_slope_m_per_m": 0.0013,
+        "effective_drain_capacity_cumecs": 0.2222,
+        "latitude": 13.016,
+        "longitude": 80.24
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
+          [
+            80.248,
+            13.016
+          ],
+          [
+            80.264,
+            13.016
+          ]
+        ]
+      },
+      "properties": {
+        "segment_id": 9,
+        "road_class": "motorway",
+        "elevation_ground_m": 6.54,
+        "terrain_slope_m_per_m": 0.0013,
+        "effective_drain_capacity_cumecs": 1.782,
+        "latitude": 13.016,
+        "longitude": 80.256
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
+          [
+            80.264,
+            13.016
+          ],
+          [
+            80.28,
+            13.016
+          ]
+        ]
+      },
+      "properties": {
+        "segment_id": 10,
+        "road_class": "primary",
+        "elevation_ground_m": 4.34,
+        "terrain_slope_m_per_m": 0.0013,
+        "effective_drain_capacity_cumecs": 0.92,
+        "latitude": 13.016,
+        "longitude": 80.272
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
+          [
+            80.2,
+            13.032
+          ],
+          [
+            80.216,
+            13.032
+          ]
+        ]
+      },
+      "properties": {
+        "segment_id": 11,
+        "road_class": "secondary",
+        "elevation_ground_m": 13.38,
+        "terrain_slope_m_per_m": 0.0013,
+        "effective_drain_capacity_cumecs": 0.5655,
+        "latitude": 13.032,
+        "longitude": 80.208
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
+          [
+            80.216,
+            13.032
+          ],
+          [
+            80.232,
+            13.032
+          ]
+        ]
+      },
+      "properties": {
+        "segment_id": 12,
+        "road_class": "residential",
+        "elevation_ground_m": 11.18,
+        "terrain_slope_m_per_m": 0.0013,
+        "effective_drain_capacity_cumecs": 0.2068,
+        "latitude": 13.032,
+        "longitude": 80.224
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
+          [
+            80.232,
+            13.032
+          ],
+          [
+            80.248,
+            13.032
+          ]
+        ]
+      },
+      "properties": {
+        "segment_id": 13,
+        "road_class": "motorway",
+        "elevation_ground_m": 8.98,
+        "terrain_slope_m_per_m": 0.0013,
+        "effective_drain_capacity_cumecs": 1.6665,
+        "latitude": 13.032,
+        "longitude": 80.24
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
+          [
+            80.248,
+            13.032
+          ],
+          [
+            80.264,
+            13.032
+          ]
+        ]
+      },
+      "properties": {
+        "segment_id": 14,
+        "road_class": "primary",
+        "elevation_ground_m": 6.78,
+        "terrain_slope_m_per_m": 0.0013,
+        "effective_drain_capacity_cumecs": 1.242,
+        "latitude": 13.032,
+        "longitude": 80.256
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
+          [
+            80.264,
+            13.032
+          ],
+          [
+            80.28,
+            13.032
+          ]
+        ]
+      },
+      "properties": {
+        "segment_id": 15,
+        "road_class": "secondary",
+        "elevation_ground_m": 4.58,
+        "terrain_slope_m_per_m": 0.0013,
+        "effective_drain_capacity_cumecs": 0.52,
+        "latitude": 13.032,
+        "longitude": 80.272
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
+          [
+            80.2,
+            13.048
+          ],
+          [
+            80.216,
+            13.048
+          ]
+        ]
+      },
+      "properties": {
+        "segment_id": 16,
+        "road_class": "residential",
+        "elevation_ground_m": 13.62,
+        "terrain_slope_m_per_m": 0.0013,
+        "effective_drain_capacity_cumecs": 0.1914,
+        "latitude": 13.048,
+        "longitude": 80.208
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
+          [
+            80.216,
+            13.048
+          ],
+          [
+            80.232,
+            13.048
+          ]
+        ]
+      },
+      "properties": {
+        "segment_id": 17,
+        "road_class": "motorway",
+        "elevation_ground_m": 11.42,
+        "terrain_slope_m_per_m": 0.0013,
+        "effective_drain_capacity_cumecs": 1.551,
+        "latitude": 13.048,
+        "longitude": 80.224
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
+          [
+            80.232,
+            13.048
+          ],
+          [
+            80.248,
+            13.048
+          ]
+        ]
+      },
+      "properties": {
+        "segment_id": 18,
+        "road_class": "primary",
+        "elevation_ground_m": 9.22,
+        "terrain_slope_m_per_m": 0.0013,
+        "effective_drain_capacity_cumecs": 1.1615,
+        "latitude": 13.048,
+        "longitude": 80.24
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
+          [
+            80.248,
+            13.048
+          ],
+          [
+            80.264,
+            13.048
+          ]
+        ]
+      },
+      "properties": {
+        "segment_id": 19,
+        "road_class": "secondary",
+        "elevation_ground_m": 7.02,
+        "terrain_slope_m_per_m": 0.0013,
+        "effective_drain_capacity_cumecs": 0.702,
+        "latitude": 13.048,
+        "longitude": 80.256
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
+          [
+            80.264,
+            13.048
+          ],
+          [
+            80.28,
+            13.048
+          ]
+        ]
+      },
+      "properties": {
+        "segment_id": 20,
+        "road_class": "residential",
+        "elevation_ground_m": 4.82,
+        "terrain_slope_m_per_m": 0.0013,
+        "effective_drain_capacity_cumecs": 0.176,
+        "latitude": 13.048,
+        "longitude": 80.272
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
+          [
+            80.2,
+            13.064
+          ],
+          [
+            80.216,
+            13.064
+          ]
+        ]
+      },
+      "properties": {
+        "segment_id": 21,
+        "road_class": "motorway",
+        "elevation_ground_m": 13.86,
+        "terrain_slope_m_per_m": 0.0013,
+        "effective_drain_capacity_cumecs": 1.4355,
+        "latitude": 13.064,
+        "longitude": 80.208
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
+          [
+            80.216,
+            13.064
+          ],
+          [
+            80.232,
+            13.064
+          ]
+        ]
+      },
+      "properties": {
+        "segment_id": 22,
+        "road_class": "primary",
+        "elevation_ground_m": 11.66,
+        "terrain_slope_m_per_m": 0.0013,
+        "effective_drain_capacity_cumecs": 1.081,
+        "latitude": 13.064,
+        "longitude": 80.224
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
+          [
+            80.232,
+            13.064
+          ],
+          [
+            80.248,
+            13.064
+          ]
+        ]
+      },
+      "properties": {
+        "segment_id": 23,
+        "road_class": "secondary",
+        "elevation_ground_m": 9.46,
+        "terrain_slope_m_per_m": 0.0013,
+        "effective_drain_capacity_cumecs": 0.6565,
+        "latitude": 13.064,
+        "longitude": 80.24
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
+          [
+            80.248,
+            13.064
+          ],
+          [
+            80.264,
+            13.064
+          ]
+        ]
+      },
+      "properties": {
+        "segment_id": 24,
+        "road_class": "residential",
+        "elevation_ground_m": 7.26,
+        "terrain_slope_m_per_m": 0.0013,
+        "effective_drain_capacity_cumecs": 0.2376,
+        "latitude": 13.064,
+        "longitude": 80.256
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
+          [
+            80.264,
+            13.064
+          ],
+          [
+            80.28,
+            13.064
+          ]
+        ]
+      },
+      "properties": {
+        "segment_id": 25,
+        "road_class": "motorway",
+        "elevation_ground_m": 5.06,
+        "terrain_slope_m_per_m": 0.0013,
+        "effective_drain_capacity_cumecs": 1.32,
+        "latitude": 13.064,
+        "longitude": 80.272
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
+          [
+            80.2,
+            13.08
+          ],
+          [
+            80.216,
+            13.08
+          ]
+        ]
+      },
+      "properties": {
+        "segment_id": 26,
+        "road_class": "primary",
+        "elevation_ground_m": 14.1,
+        "terrain_slope_m_per_m": 0.0013,
+        "effective_drain_capacity_cumecs": 1.0005,
+        "latitude": 13.08,
+        "longitude": 80.208
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
+          [
+            80.216,
+            13.08
+          ],
+          [
+            80.232,
+            13.08
+          ]
+        ]
+      },
+      "properties": {
+        "segment_id": 27,
+        "road_class": "secondary",
+        "elevation_ground_m": 11.9,
+        "terrain_slope_m_per_m": 0.0013,
+        "effective_drain_capacity_cumecs": 0.611,
+        "latitude": 13.08,
+        "longitude": 80.224
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
+          [
+            80.232,
+            13.08
+          ],
+          [
+            80.248,
+            13.08
+          ]
+        ]
+      },
+      "properties": {
+        "segment_id": 28,
+        "road_class": "residential",
+        "elevation_ground_m": 9.7,
+        "terrain_slope_m_per_m": 0.0013,
+        "effective_drain_capacity_cumecs": 0.2222,
+        "latitude": 13.08,
+        "longitude": 80.24
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
+          [
+            80.248,
+            13.08
+          ],
+          [
+            80.264,
+            13.08
+          ]
+        ]
+      },
+      "properties": {
+        "segment_id": 29,
+        "road_class": "motorway",
+        "elevation_ground_m": 7.5,
+        "terrain_slope_m_per_m": 0.0013,
+        "effective_drain_capacity_cumecs": 1.782,
+        "latitude": 13.08,
+        "longitude": 80.256
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
+          [
+            80.264,
+            13.08
+          ],
+          [
+            80.28,
+            13.08
+          ]
+        ]
+      },
+      "properties": {
+        "segment_id": 30,
+        "road_class": "primary",
+        "elevation_ground_m": 5.3,
+        "terrain_slope_m_per_m": 0.0013,
+        "effective_drain_capacity_cumecs": 0.92,
+        "latitude": 13.08,
+        "longitude": 80.272
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
+          [
+            80.2,
+            13.0
+          ],
+          [
+            80.2,
+            13.016
+          ]
+        ]
+      },
+      "properties": {
+        "segment_id": 31,
+        "road_class": "motorway",
+        "elevation_ground_m": 14.12,
+        "terrain_slope_m_per_m": 0.001,
+        "effective_drain_capacity_cumecs": 1.4355,
+        "latitude": 13.008,
+        "longitude": 80.2
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
+          [
+            80.2,
+            13.016
+          ],
+          [
+            80.2,
+            13.032
+          ]
+        ]
+      },
+      "properties": {
+        "segment_id": 32,
+        "road_class": "secondary",
+        "elevation_ground_m": 14.36,
+        "terrain_slope_m_per_m": 0.001,
+        "effective_drain_capacity_cumecs": 0.611,
+        "latitude": 13.024,
+        "longitude": 80.2
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
+          [
+            80.2,
+            13.032
+          ],
+          [
+            80.2,
+            13.048
+          ]
+        ]
+      },
+      "properties": {
+        "segment_id": 33,
+        "road_class": "motorway",
+        "elevation_ground_m": 14.6,
+        "terrain_slope_m_per_m": 0.001,
+        "effective_drain_capacity_cumecs": 1.6665,
+        "latitude": 13.04,
+        "longitude": 80.2
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
+          [
+            80.2,
+            13.048
+          ],
+          [
+            80.2,
+            13.064
+          ]
+        ]
+      },
+      "properties": {
+        "segment_id": 34,
+        "road_class": "secondary",
+        "elevation_ground_m": 14.84,
+        "terrain_slope_m_per_m": 0.001,
+        "effective_drain_capacity_cumecs": 0.702,
+        "latitude": 13.056,
+        "longitude": 80.2
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
+          [
+            80.2,
+            13.064
+          ],
+          [
+            80.2,
+            13.08
+          ]
+        ]
+      },
+      "properties": {
+        "segment_id": 35,
+        "road_class": "motorway",
+        "elevation_ground_m": 15.0,
+        "terrain_slope_m_per_m": 0.001,
+        "effective_drain_capacity_cumecs": 1.32,
+        "latitude": 13.072,
+        "longitude": 80.2
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
+          [
+            80.216,
+            13.0
+          ],
+          [
+            80.216,
+            13.016
+          ]
+        ]
+      },
+      "properties": {
+        "segment_id": 36,
+        "road_class": "primary",
+        "elevation_ground_m": 11.92,
+        "terrain_slope_m_per_m": 0.001,
+        "effective_drain_capacity_cumecs": 1.0005,
+        "latitude": 13.008,
+        "longitude": 80.216
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
+          [
+            80.216,
+            13.016
+          ],
+          [
+            80.216,
+            13.032
+          ]
+        ]
+      },
+      "properties": {
+        "segment_id": 37,
+        "road_class": "residential",
+        "elevation_ground_m": 12.16,
+        "terrain_slope_m_per_m": 0.001,
+        "effective_drain_capacity_cumecs": 0.2068,
+        "latitude": 13.024,
+        "longitude": 80.216
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
+          [
+            80.216,
+            13.032
+          ],
+          [
+            80.216,
+            13.048
+          ]
+        ]
+      },
+      "properties": {
+        "segment_id": 38,
+        "road_class": "primary",
+        "elevation_ground_m": 12.4,
+        "terrain_slope_m_per_m": 0.001,
+        "effective_drain_capacity_cumecs": 1.1615,
+        "latitude": 13.04,
+        "longitude": 80.216
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
+          [
+            80.216,
+            13.048
+          ],
+          [
+            80.216,
+            13.064
+          ]
+        ]
+      },
+      "properties": {
+        "segment_id": 39,
+        "road_class": "residential",
+        "elevation_ground_m": 12.64,
+        "terrain_slope_m_per_m": 0.001,
+        "effective_drain_capacity_cumecs": 0.2376,
+        "latitude": 13.056,
+        "longitude": 80.216
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
+          [
+            80.216,
+            13.064
+          ],
+          [
+            80.216,
+            13.08
+          ]
+        ]
+      },
+      "properties": {
+        "segment_id": 40,
+        "road_class": "primary",
+        "elevation_ground_m": 12.88,
+        "terrain_slope_m_per_m": 0.001,
+        "effective_drain_capacity_cumecs": 0.92,
+        "latitude": 13.072,
+        "longitude": 80.216
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
+          [
+            80.232,
+            13.0
+          ],
+          [
+            80.232,
+            13.016
+          ]
+        ]
+      },
+      "properties": {
+        "segment_id": 41,
+        "road_class": "secondary",
+        "elevation_ground_m": 9.72,
+        "terrain_slope_m_per_m": 0.001,
+        "effective_drain_capacity_cumecs": 0.5655,
+        "latitude": 13.008,
+        "longitude": 80.232
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
+          [
+            80.232,
+            13.016
+          ],
+          [
+            80.232,
+            13.032
+          ]
+        ]
+      },
+      "properties": {
+        "segment_id": 42,
+        "road_class": "motorway",
+        "elevation_ground_m": 9.96,
+        "terrain_slope_m_per_m": 0.001,
+        "effective_drain_capacity_cumecs": 1.551,
+        "latitude": 13.024,
+        "longitude": 80.232
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
+          [
+            80.232,
+            13.032
+          ],
+          [
+            80.232,
+            13.048
+          ]
+        ]
+      },
+      "properties": {
+        "segment_id": 43,
+        "road_class": "secondary",
+        "elevation_ground_m": 10.2,
+        "terrain_slope_m_per_m": 0.001,
+        "effective_drain_capacity_cumecs": 0.6565,
+        "latitude": 13.04,
+        "longitude": 80.232
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
+          [
+            80.232,
+            13.048
+          ],
+          [
+            80.232,
+            13.064
+          ]
+        ]
+      },
+      "properties": {
+        "segment_id": 44,
+        "road_class": "motorway",
+        "elevation_ground_m": 10.44,
+        "terrain_slope_m_per_m": 0.001,
+        "effective_drain_capacity_cumecs": 1.782,
+        "latitude": 13.056,
+        "longitude": 80.232
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
+          [
+            80.232,
+            13.064
+          ],
+          [
+            80.232,
+            13.08
+          ]
+        ]
+      },
+      "properties": {
+        "segment_id": 45,
+        "road_class": "secondary",
+        "elevation_ground_m": 10.68,
+        "terrain_slope_m_per_m": 0.001,
+        "effective_drain_capacity_cumecs": 0.52,
+        "latitude": 13.072,
+        "longitude": 80.232
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
+          [
+            80.248,
+            13.0
+          ],
+          [
+            80.248,
+            13.016
+          ]
+        ]
+      },
+      "properties": {
+        "segment_id": 46,
+        "road_class": "residential",
+        "elevation_ground_m": 7.52,
+        "terrain_slope_m_per_m": 0.001,
+        "effective_drain_capacity_cumecs": 0.1914,
+        "latitude": 13.008,
+        "longitude": 80.248
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
+          [
+            80.248,
+            13.016
+          ],
+          [
+            80.248,
+            13.032
+          ]
+        ]
+      },
+      "properties": {
+        "segment_id": 47,
+        "road_class": "primary",
+        "elevation_ground_m": 7.76,
+        "terrain_slope_m_per_m": 0.001,
+        "effective_drain_capacity_cumecs": 1.081,
+        "latitude": 13.024,
+        "longitude": 80.248
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
+          [
+            80.248,
+            13.032
+          ],
+          [
+            80.248,
+            13.048
+          ]
+        ]
+      },
+      "properties": {
+        "segment_id": 48,
+        "road_class": "residential",
+        "elevation_ground_m": 8.0,
+        "terrain_slope_m_per_m": 0.001,
+        "effective_drain_capacity_cumecs": 0.2222,
+        "latitude": 13.04,
+        "longitude": 80.248
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
+          [
+            80.248,
+            13.048
+          ],
+          [
+            80.248,
+            13.064
+          ]
+        ]
+      },
+      "properties": {
+        "segment_id": 49,
+        "road_class": "primary",
+        "elevation_ground_m": 8.24,
+        "terrain_slope_m_per_m": 0.001,
+        "effective_drain_capacity_cumecs": 1.242,
+        "latitude": 13.056,
+        "longitude": 80.248
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
+          [
+            80.248,
+            13.064
+          ],
+          [
+            80.248,
+            13.08
+          ]
+        ]
+      },
+      "properties": {
+        "segment_id": 50,
+        "road_class": "residential",
+        "elevation_ground_m": 8.48,
+        "terrain_slope_m_per_m": 0.001,
+        "effective_drain_capacity_cumecs": 0.176,
+        "latitude": 13.072,
+        "longitude": 80.248
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
+          [
+            80.264,
+            13.0
+          ],
+          [
+            80.264,
+            13.016
+          ]
+        ]
+      },
+      "properties": {
+        "segment_id": 51,
+        "road_class": "motorway",
+        "elevation_ground_m": 5.32,
+        "terrain_slope_m_per_m": 0.001,
+        "effective_drain_capacity_cumecs": 1.4355,
+        "latitude": 13.008,
+        "longitude": 80.264
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
+          [
+            80.264,
+            13.016
+          ],
+          [
+            80.264,
+            13.032
+          ]
+        ]
+      },
+      "properties": {
+        "segment_id": 52,
+        "road_class": "secondary",
+        "elevation_ground_m": 5.56,
+        "terrain_slope_m_per_m": 0.001,
+        "effective_drain_capacity_cumecs": 0.611,
+        "latitude": 13.024,
+        "longitude": 80.264
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
+          [
+            80.264,
+            13.032
+          ],
+          [
+            80.264,
+            13.048
+          ]
+        ]
+      },
+      "properties": {
+        "segment_id": 53,
+        "road_class": "motorway",
+        "elevation_ground_m": 5.8,
+        "terrain_slope_m_per_m": 0.001,
+        "effective_drain_capacity_cumecs": 1.6665,
+        "latitude": 13.04,
+        "longitude": 80.264
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
+          [
+            80.264,
+            13.048
+          ],
+          [
+            80.264,
+            13.064
+          ]
+        ]
+      },
+      "properties": {
+        "segment_id": 54,
+        "road_class": "secondary",
+        "elevation_ground_m": 6.04,
+        "terrain_slope_m_per_m": 0.001,
+        "effective_drain_capacity_cumecs": 0.702,
+        "latitude": 13.056,
+        "longitude": 80.264
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
+          [
+            80.264,
+            13.064
+          ],
+          [
+            80.264,
+            13.08
+          ]
+        ]
+      },
+      "properties": {
+        "segment_id": 55,
+        "road_class": "motorway",
+        "elevation_ground_m": 6.28,
+        "terrain_slope_m_per_m": 0.001,
+        "effective_drain_capacity_cumecs": 1.32,
+        "latitude": 13.072,
+        "longitude": 80.264
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
+          [
+            80.28,
+            13.0
+          ],
+          [
+            80.28,
+            13.016
+          ]
+        ]
+      },
+      "properties": {
+        "segment_id": 56,
+        "road_class": "primary",
+        "elevation_ground_m": 3.12,
+        "terrain_slope_m_per_m": 0.001,
+        "effective_drain_capacity_cumecs": 1.0005,
+        "latitude": 13.008,
+        "longitude": 80.28
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
+          [
+            80.28,
+            13.016
+          ],
+          [
+            80.28,
+            13.032
+          ]
+        ]
+      },
+      "properties": {
+        "segment_id": 57,
+        "road_class": "residential",
+        "elevation_ground_m": 3.36,
+        "terrain_slope_m_per_m": 0.001,
+        "effective_drain_capacity_cumecs": 0.2068,
+        "latitude": 13.024,
+        "longitude": 80.28
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
+          [
+            80.28,
+            13.032
+          ],
+          [
+            80.28,
+            13.048
+          ]
+        ]
+      },
+      "properties": {
+        "segment_id": 58,
+        "road_class": "primary",
+        "elevation_ground_m": 3.6,
+        "terrain_slope_m_per_m": 0.001,
+        "effective_drain_capacity_cumecs": 1.1615,
+        "latitude": 13.04,
+        "longitude": 80.28
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
+          [
+            80.28,
+            13.048
+          ],
+          [
+            80.28,
+            13.064
+          ]
+        ]
+      },
+      "properties": {
+        "segment_id": 59,
+        "road_class": "residential",
+        "elevation_ground_m": 3.84,
+        "terrain_slope_m_per_m": 0.001,
+        "effective_drain_capacity_cumecs": 0.2376,
+        "latitude": 13.056,
+        "longitude": 80.28
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
+          [
+            80.28,
+            13.064
+          ],
+          [
+            80.28,
+            13.08
+          ]
+        ]
+      },
+      "properties": {
+        "segment_id": 60,
+        "road_class": "primary",
+        "elevation_ground_m": 4.08,
+        "terrain_slope_m_per_m": 0.001,
+        "effective_drain_capacity_cumecs": 0.92,
+        "latitude": 13.072,
+        "longitude": 80.28
+      }
+    }
+  ]
+}

@@ -50,7 +50,7 @@ class CoupledResult:
         payload: Dict[str, Any] = {
             "status": "success",
             "mode": diag.get("mode", "auto"),
-            "scenario": diag.get("scenario", "michaung"),
+            "scenario": diag.get("scenario", "monsoon"),
             "horizon_min": diag.get("horizon_min", 60),
             "amc": diag.get("amc", "AMC_III"),
             "timestamp": str(self.layer0_result.calibrated_sweep.timestamp),
@@ -124,7 +124,7 @@ class Layer0Layer1Coupler:
     def couple(
         self,
         mode: str = "auto",
-        scenario: str = "michaung",
+        scenario: str = "monsoon",
         horizon_min: int = 60,
         amc: str = "AMC_III",
         custom_roads_df: Optional[pd.DataFrame] = None
@@ -181,7 +181,7 @@ class Layer0Layer1Coupler:
 
 
 def run_coupled_layer0_layer1(
-    scenario: str = "michaung",
+    scenario: str = "monsoon",
     horizon_min: int = 60,
     amc: str = "AMC_III",
     mode: str = "auto"

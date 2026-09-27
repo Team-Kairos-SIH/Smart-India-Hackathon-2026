@@ -29,8 +29,8 @@ def main():
     parser.add_argument(
         "--scenario",
         type=str,
-        default="michaung",
-        help="Storm scenario name (michaung, 2015_flood, monsoon, dry)",
+        default="monsoon",
+        help="Storm scenario name (monsoon, cloudburst, 2015_flood, michaung, dry)",
     )
     parser.add_argument(
         "--horizon",

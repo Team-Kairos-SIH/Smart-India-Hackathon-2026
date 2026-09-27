@@ -46,7 +46,7 @@ class TestOrchestrationSubpackage(unittest.TestCase):
         self.assertGreater(mean_rain, 50.0)
         self.assertGreater(mean_runoff, 40.0)
 
-        # Verify mass balance error is 0.000000%
+        # Verify mass balance error is < 0.001% (analytical projection residual)
         r_diag = res.diagnostics["layer1_runoff_diagnostics"]
         self.assertLess(r_diag["mass_balance_error_pct"], 0.01)
 

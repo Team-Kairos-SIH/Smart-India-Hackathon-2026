@@ -114,7 +114,13 @@ class Layer2Pipeline:
             s0 = edge["slope_m_per_m"]
             z = edge["zone_no"]
             mu = self.clogging_model.get_zone_clogging_factor(z, global_modifier=clogging_modifier)
-            q_cap = edge["effective_capacity_m3_s"]
+            if clogging_modifier != 1.0:
+                hydraulics = self.conduit_engine.calculate_circular_pipe(
+                    diameter_m=dia, slope_m_per_m=s0, mu_clog=mu
+                )
+                q_cap = round(hydraulics["effective_capacity_m3_s"] * edge.get("tidal_throttle", 1.0), 3)
+            else:
+                q_cap = edge["effective_capacity_m3_s"]
 
             # Surface inflow: real Layer 1 runoff or legacy Rational method fallback
             if using_l1 and drain_id in drain_lookup:

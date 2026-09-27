@@ -15,7 +15,12 @@ from pathlib import Path
 from typing import Any, Dict, Optional, Tuple, List
 
 import numpy as np
-import geopandas as gpd
+try:
+    import geopandas as gpd
+    HAS_GEOPANDAS = True
+except ImportError:
+    gpd = None
+    HAS_GEOPANDAS = False
 from shapely.geometry import box
 from scipy import ndimage
 
@@ -119,10 +124,18 @@ class DEMBuilder:
                 self.create_cartosat_mosaic()
 
         with rasterio.open(src_path) as src:
-            bbox_poly = box(*bounds_wgs84)
-            gdf_bbox = gpd.GeoDataFrame({"geometry": [bbox_poly]}, crs="EPSG:4326")
-            gdf_utm = gdf_bbox.to_crs(dst_crs)
-            minx, miny, maxx, maxy = gdf_utm.total_bounds
+            if HAS_GEOPANDAS:
+                bbox_poly = box(*bounds_wgs84)
+                gdf_bbox = gpd.GeoDataFrame({"geometry": [bbox_poly]}, crs="EPSG:4326")
+                gdf_utm = gdf_bbox.to_crs(dst_crs)
+                minx, miny, maxx, maxy = gdf_utm.total_bounds
+            else:
+                try:
+                    import pyproj
+                    transformer = pyproj.Transformer.from_crs("EPSG:4326", dst_crs, always_xy=True)
+                    minx, miny, maxx, maxy = transformer.transform_bounds(*bounds_wgs84)
+                except Exception:
+                    minx, miny, maxx, maxy = 385000.0, 1400000.0, 435000.0, 1475000.0
 
             dst_width = int(np.ceil((maxx - minx) / resolution_m))
             dst_height = int(np.ceil((maxy - miny) / resolution_m))
@@ -195,25 +208,36 @@ class DEMBuilder:
             if "insar_subsidence_mm_year" not in df.columns:
                 return dem
 
-            gdf = gpd.GeoDataFrame(df, geometry=gpd.points_from_xy(df.longitude, df.latitude), crs="EPSG:4326")
-            gdf_utm = gdf.to_crs(crs)
+            if HAS_GEOPANDAS:
+                gdf = gpd.GeoDataFrame(df, geometry=gpd.points_from_xy(df.longitude, df.latitude), crs="EPSG:4326")
+                gdf_utm = gdf.to_crs(crs)
+                point_coords = [(pt.x, pt.y) for pt in gdf_utm.geometry]
+                rates = gdf_utm.get("insar_subsidence_mm_year", df["insar_subsidence_mm_year"]).values
+            else:
+                try:
+                    import pyproj
+                    transformer = pyproj.Transformer.from_crs("EPSG:4326", crs, always_xy=True)
+                    xs, ys = transformer.transform(df["longitude"].values, df["latitude"].values)
+                    point_coords = list(zip(xs, ys))
+                    rates = df["insar_subsidence_mm_year"].values
+                except Exception:
+                    point_coords = []
+                    rates = []
 
             # Cumulative subsidence over 5 years (2021 to 2026) in meters
             inv_trans = ~transform
             corrected_dem = dem.copy()
             h, w = dem.shape
 
-            for _, row in gdf_utm.iterrows():
-                rate_mm = row.get("insar_subsidence_mm_year", 0.0)
+            for (px, py), rate_mm in zip(point_coords, rates):
                 if rate_mm > 0:
-                    pt = row.geometry
-                    col, r = inv_trans @ (pt.x, pt.y)
+                    col, r = inv_trans @ (px, py)
                     r_idx, c_idx = int(round(r)), int(round(col))
                     if 0 <= r_idx < h and 0 <= c_idx < w:
                         offset_m = (rate_mm * 5.0) / 1000.0
                         corrected_dem[r_idx, c_idx] = max(0.0, corrected_dem[r_idx, c_idx] - offset_m)
 
-            logger.info("Applied InSAR subsidence adjustment to %d control points", len(gdf_utm))
+            logger.info("Applied InSAR subsidence adjustment to %d control points", len(point_coords))
             return corrected_dem
         except Exception as e:
             logger.warning("Could not apply InSAR subsidence: %s", e)

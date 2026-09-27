@@ -8,7 +8,7 @@ logger = logging.getLogger(__name__)
 SHAR_RADAR_LAT = 13.7198
 SHAR_RADAR_LON = 80.2304
 
-def fetch_isro_shar_sweep(scenario: str = 'michaung', shape: Tuple[int, int] = (79, 83)) -> Dict[str, Any]:
+def fetch_isro_shar_sweep(scenario: str = 'monsoon', shape: Tuple[int, int] = (79, 83)) -> Dict[str, Any]:
     '''Ingests ISRO SDSC SHAR Doppler Radar sweep covering Chennai, eliminating the southern blind cone.'''
     n_lat, n_lon = shape
     y_idx = np.arange(n_lat)[:, None]
