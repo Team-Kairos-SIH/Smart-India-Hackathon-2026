@@ -1,0 +1,1445 @@
+{
+  "type": "FeatureCollection",
+  "features": [
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
+          [
+            80.2,
+            13.0
+          ],
+          [
+            80.216,
+            13.0
+          ]
+        ]
+      },
+      "properties": {
+        "pipe_id": 1,
+        "diameter_mm": 1200,
+        "length_m": 1735.2,
+        "manning_n": 0.013,
+        "invert_level_us_m": 12.5,
+        "invert_level_ds_m": 10.2
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
+          [
+            80.216,
+            13.0
+          ],
+          [
+            80.232,
+            13.0
+          ]
+        ]
+      },
+      "properties": {
+        "pipe_id": 2,
+        "diameter_mm": 900,
+        "length_m": 1735.2,
+        "manning_n": 0.013,
+        "invert_level_us_m": 10.3,
+        "invert_level_ds_m": 8.0
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
+          [
+            80.232,
+            13.0
+          ],
+          [
+            80.248,
+            13.0
+          ]
+        ]
+      },
+      "properties": {
+        "pipe_id": 3,
+        "diameter_mm": 600,
+        "length_m": 1735.2,
+        "manning_n": 0.014,
+        "invert_level_us_m": 8.1,
+        "invert_level_ds_m": 5.8
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
+          [
+            80.248,
+            13.0
+          ],
+          [
+            80.264,
+            13.0
+          ]
+        ]
+      },
+      "properties": {
+        "pipe_id": 4,
+        "diameter_mm": 450,
+        "length_m": 1735.2,
+        "manning_n": 0.014,
+        "invert_level_us_m": 5.9,
+        "invert_level_ds_m": 3.6
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
+          [
+            80.264,
+            13.0
+          ],
+          [
+            80.28,
+            13.0
+          ]
+        ]
+      },
+      "properties": {
+        "pipe_id": 5,
+        "diameter_mm": 1200,
+        "length_m": 1735.2,
+        "manning_n": 0.013,
+        "invert_level_us_m": 3.7,
+        "invert_level_ds_m": 1.4
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
+          [
+            80.2,
+            13.016
+          ],
+          [
+            80.216,
+            13.016
+          ]
+        ]
+      },
+      "properties": {
+        "pipe_id": 6,
+        "diameter_mm": 900,
+        "length_m": 1735.2,
+        "manning_n": 0.013,
+        "invert_level_us_m": 12.74,
+        "invert_level_ds_m": 10.44
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
+          [
+            80.216,
+            13.016
+          ],
+          [
+            80.232,
+            13.016
+          ]
+        ]
+      },
+      "properties": {
+        "pipe_id": 7,
+        "diameter_mm": 600,
+        "length_m": 1735.2,
+        "manning_n": 0.014,
+        "invert_level_us_m": 10.54,
+        "invert_level_ds_m": 8.24
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
+          [
+            80.232,
+            13.016
+          ],
+          [
+            80.248,
+            13.016
+          ]
+        ]
+      },
+      "properties": {
+        "pipe_id": 8,
+        "diameter_mm": 450,
+        "length_m": 1735.2,
+        "manning_n": 0.014,
+        "invert_level_us_m": 8.34,
+        "invert_level_ds_m": 6.04
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
+          [
+            80.248,
+            13.016
+          ],
+          [
+            80.264,
+            13.016
+          ]
+        ]
+      },
+      "properties": {
+        "pipe_id": 9,
+        "diameter_mm": 1200,
+        "length_m": 1735.2,
+        "manning_n": 0.013,
+        "invert_level_us_m": 6.14,
+        "invert_level_ds_m": 3.84
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
+          [
+            80.264,
+            13.016
+          ],
+          [
+            80.28,
+            13.016
+          ]
+        ]
+      },
+      "properties": {
+        "pipe_id": 10,
+        "diameter_mm": 900,
+        "length_m": 1735.2,
+        "manning_n": 0.013,
+        "invert_level_us_m": 3.94,
+        "invert_level_ds_m": 1.64
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
+          [
+            80.2,
+            13.032
+          ],
+          [
+            80.216,
+            13.032
+          ]
+        ]
+      },
+      "properties": {
+        "pipe_id": 11,
+        "diameter_mm": 600,
+        "length_m": 1735.2,
+        "manning_n": 0.014,
+        "invert_level_us_m": 12.98,
+        "invert_level_ds_m": 10.68
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
+          [
+            80.216,
+            13.032
+          ],
+          [
+            80.232,
+            13.032
+          ]
+        ]
+      },
+      "properties": {
+        "pipe_id": 12,
+        "diameter_mm": 450,
+        "length_m": 1735.2,
+        "manning_n": 0.014,
+        "invert_level_us_m": 10.78,
+        "invert_level_ds_m": 8.48
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
+          [
+            80.232,
+            13.032
+          ],
+          [
+            80.248,
+            13.032
+          ]
+        ]
+      },
+      "properties": {
+        "pipe_id": 13,
+        "diameter_mm": 1200,
+        "length_m": 1735.2,
+        "manning_n": 0.013,
+        "invert_level_us_m": 8.58,
+        "invert_level_ds_m": 6.28
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
+          [
+            80.248,
+            13.032
+          ],
+          [
+            80.264,
+            13.032
+          ]
+        ]
+      },
+      "properties": {
+        "pipe_id": 14,
+        "diameter_mm": 900,
+        "length_m": 1735.2,
+        "manning_n": 0.013,
+        "invert_level_us_m": 6.38,
+        "invert_level_ds_m": 4.08
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
+          [
+            80.264,
+            13.032
+          ],
+          [
+            80.28,
+            13.032
+          ]
+        ]
+      },
+      "properties": {
+        "pipe_id": 15,
+        "diameter_mm": 600,
+        "length_m": 1735.2,
+        "manning_n": 0.014,
+        "invert_level_us_m": 4.18,
+        "invert_level_ds_m": 1.88
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
+          [
+            80.2,
+            13.048
+          ],
+          [
+            80.216,
+            13.048
+          ]
+        ]
+      },
+      "properties": {
+        "pipe_id": 16,
+        "diameter_mm": 450,
+        "length_m": 1735.2,
+        "manning_n": 0.014,
+        "invert_level_us_m": 13.22,
+        "invert_level_ds_m": 10.92
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
+          [
+            80.216,
+            13.048
+          ],
+          [
+            80.232,
+            13.048
+          ]
+        ]
+      },
+      "properties": {
+        "pipe_id": 17,
+        "diameter_mm": 1200,
+        "length_m": 1735.2,
+        "manning_n": 0.013,
+        "invert_level_us_m": 11.02,
+        "invert_level_ds_m": 8.72
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
+          [
+            80.232,
+            13.048
+          ],
+          [
+            80.248,
+            13.048
+          ]
+        ]
+      },
+      "properties": {
+        "pipe_id": 18,
+        "diameter_mm": 900,
+        "length_m": 1735.2,
+        "manning_n": 0.013,
+        "invert_level_us_m": 8.82,
+        "invert_level_ds_m": 6.52
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
+          [
+            80.248,
+            13.048
+          ],
+          [
+            80.264,
+            13.048
+          ]
+        ]
+      },
+      "properties": {
+        "pipe_id": 19,
+        "diameter_mm": 600,
+        "length_m": 1735.2,
+        "manning_n": 0.014,
+        "invert_level_us_m": 6.62,
+        "invert_level_ds_m": 4.32
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
+          [
+            80.264,
+            13.048
+          ],
+          [
+            80.28,
+            13.048
+          ]
+        ]
+      },
+      "properties": {
+        "pipe_id": 20,
+        "diameter_mm": 450,
+        "length_m": 1735.2,
+        "manning_n": 0.014,
+        "invert_level_us_m": 4.42,
+        "invert_level_ds_m": 2.12
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
+          [
+            80.2,
+            13.064
+          ],
+          [
+            80.216,
+            13.064
+          ]
+        ]
+      },
+      "properties": {
+        "pipe_id": 21,
+        "diameter_mm": 1200,
+        "length_m": 1735.2,
+        "manning_n": 0.013,
+        "invert_level_us_m": 13.46,
+        "invert_level_ds_m": 11.16
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
+          [
+            80.216,
+            13.064
+          ],
+          [
+            80.232,
+            13.064
+          ]
+        ]
+      },
+      "properties": {
+        "pipe_id": 22,
+        "diameter_mm": 900,
+        "length_m": 1735.2,
+        "manning_n": 0.013,
+        "invert_level_us_m": 11.26,
+        "invert_level_ds_m": 8.96
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
+          [
+            80.232,
+            13.064
+          ],
+          [
+            80.248,
+            13.064
+          ]
+        ]
+      },
+      "properties": {
+        "pipe_id": 23,
+        "diameter_mm": 600,
+        "length_m": 1735.2,
+        "manning_n": 0.014,
+        "invert_level_us_m": 9.06,
+        "invert_level_ds_m": 6.76
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
+          [
+            80.248,
+            13.064
+          ],
+          [
+            80.264,
+            13.064
+          ]
+        ]
+      },
+      "properties": {
+        "pipe_id": 24,
+        "diameter_mm": 450,
+        "length_m": 1735.2,
+        "manning_n": 0.014,
+        "invert_level_us_m": 6.86,
+        "invert_level_ds_m": 4.56
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
+          [
+            80.264,
+            13.064
+          ],
+          [
+            80.28,
+            13.064
+          ]
+        ]
+      },
+      "properties": {
+        "pipe_id": 25,
+        "diameter_mm": 1200,
+        "length_m": 1735.2,
+        "manning_n": 0.013,
+        "invert_level_us_m": 4.66,
+        "invert_level_ds_m": 2.36
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
+          [
+            80.2,
+            13.08
+          ],
+          [
+            80.216,
+            13.08
+          ]
+        ]
+      },
+      "properties": {
+        "pipe_id": 26,
+        "diameter_mm": 900,
+        "length_m": 1735.2,
+        "manning_n": 0.013,
+        "invert_level_us_m": 13.7,
+        "invert_level_ds_m": 11.4
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
+          [
+            80.216,
+            13.08
+          ],
+          [
+            80.232,
+            13.08
+          ]
+        ]
+      },
+      "properties": {
+        "pipe_id": 27,
+        "diameter_mm": 600,
+        "length_m": 1735.2,
+        "manning_n": 0.014,
+        "invert_level_us_m": 11.5,
+        "invert_level_ds_m": 9.2
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
+          [
+            80.232,
+            13.08
+          ],
+          [
+            80.248,
+            13.08
+          ]
+        ]
+      },
+      "properties": {
+        "pipe_id": 28,
+        "diameter_mm": 450,
+        "length_m": 1735.2,
+        "manning_n": 0.014,
+        "invert_level_us_m": 9.3,
+        "invert_level_ds_m": 7.0
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
+          [
+            80.248,
+            13.08
+          ],
+          [
+            80.264,
+            13.08
+          ]
+        ]
+      },
+      "properties": {
+        "pipe_id": 29,
+        "diameter_mm": 1200,
+        "length_m": 1735.2,
+        "manning_n": 0.013,
+        "invert_level_us_m": 7.1,
+        "invert_level_ds_m": 4.8
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
+          [
+            80.264,
+            13.08
+          ],
+          [
+            80.28,
+            13.08
+          ]
+        ]
+      },
+      "properties": {
+        "pipe_id": 30,
+        "diameter_mm": 900,
+        "length_m": 1735.2,
+        "manning_n": 0.013,
+        "invert_level_us_m": 4.9,
+        "invert_level_ds_m": 2.6
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
+          [
+            80.2,
+            13.0
+          ],
+          [
+            80.2,
+            13.016
+          ]
+        ]
+      },
+      "properties": {
+        "pipe_id": 31,
+        "diameter_mm": 1200,
+        "length_m": 1768.6,
+        "manning_n": 0.013,
+        "invert_level_us_m": 12.74,
+        "invert_level_ds_m": 12.4
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
+          [
+            80.2,
+            13.016
+          ],
+          [
+            80.2,
+            13.032
+          ]
+        ]
+      },
+      "properties": {
+        "pipe_id": 32,
+        "diameter_mm": 600,
+        "length_m": 1768.6,
+        "manning_n": 0.014,
+        "invert_level_us_m": 12.98,
+        "invert_level_ds_m": 12.64
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
+          [
+            80.2,
+            13.032
+          ],
+          [
+            80.2,
+            13.048
+          ]
+        ]
+      },
+      "properties": {
+        "pipe_id": 33,
+        "diameter_mm": 1200,
+        "length_m": 1768.6,
+        "manning_n": 0.013,
+        "invert_level_us_m": 13.22,
+        "invert_level_ds_m": 12.88
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
+          [
+            80.2,
+            13.048
+          ],
+          [
+            80.2,
+            13.064
+          ]
+        ]
+      },
+      "properties": {
+        "pipe_id": 34,
+        "diameter_mm": 600,
+        "length_m": 1768.6,
+        "manning_n": 0.014,
+        "invert_level_us_m": 13.46,
+        "invert_level_ds_m": 13.12
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
+          [
+            80.2,
+            13.064
+          ],
+          [
+            80.2,
+            13.08
+          ]
+        ]
+      },
+      "properties": {
+        "pipe_id": 35,
+        "diameter_mm": 1200,
+        "length_m": 1768.6,
+        "manning_n": 0.013,
+        "invert_level_us_m": 13.7,
+        "invert_level_ds_m": 13.36
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
+          [
+            80.216,
+            13.0
+          ],
+          [
+            80.216,
+            13.016
+          ]
+        ]
+      },
+      "properties": {
+        "pipe_id": 36,
+        "diameter_mm": 900,
+        "length_m": 1768.6,
+        "manning_n": 0.013,
+        "invert_level_us_m": 10.54,
+        "invert_level_ds_m": 10.2
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
+          [
+            80.216,
+            13.016
+          ],
+          [
+            80.216,
+            13.032
+          ]
+        ]
+      },
+      "properties": {
+        "pipe_id": 37,
+        "diameter_mm": 450,
+        "length_m": 1768.6,
+        "manning_n": 0.014,
+        "invert_level_us_m": 10.78,
+        "invert_level_ds_m": 10.44
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
+          [
+            80.216,
+            13.032
+          ],
+          [
+            80.216,
+            13.048
+          ]
+        ]
+      },
+      "properties": {
+        "pipe_id": 38,
+        "diameter_mm": 900,
+        "length_m": 1768.6,
+        "manning_n": 0.013,
+        "invert_level_us_m": 11.02,
+        "invert_level_ds_m": 10.68
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
+          [
+            80.216,
+            13.048
+          ],
+          [
+            80.216,
+            13.064
+          ]
+        ]
+      },
+      "properties": {
+        "pipe_id": 39,
+        "diameter_mm": 450,
+        "length_m": 1768.6,
+        "manning_n": 0.014,
+        "invert_level_us_m": 11.26,
+        "invert_level_ds_m": 10.92
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
+          [
+            80.216,
+            13.064
+          ],
+          [
+            80.216,
+            13.08
+          ]
+        ]
+      },
+      "properties": {
+        "pipe_id": 40,
+        "diameter_mm": 900,
+        "length_m": 1768.6,
+        "manning_n": 0.013,
+        "invert_level_us_m": 11.5,
+        "invert_level_ds_m": 11.16
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
+          [
+            80.232,
+            13.0
+          ],
+          [
+            80.232,
+            13.016
+          ]
+        ]
+      },
+      "properties": {
+        "pipe_id": 41,
+        "diameter_mm": 600,
+        "length_m": 1768.6,
+        "manning_n": 0.014,
+        "invert_level_us_m": 8.34,
+        "invert_level_ds_m": 8.0
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
+          [
+            80.232,
+            13.016
+          ],
+          [
+            80.232,
+            13.032
+          ]
+        ]
+      },
+      "properties": {
+        "pipe_id": 42,
+        "diameter_mm": 1200,
+        "length_m": 1768.6,
+        "manning_n": 0.013,
+        "invert_level_us_m": 8.58,
+        "invert_level_ds_m": 8.24
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
+          [
+            80.232,
+            13.032
+          ],
+          [
+            80.232,
+            13.048
+          ]
+        ]
+      },
+      "properties": {
+        "pipe_id": 43,
+        "diameter_mm": 600,
+        "length_m": 1768.6,
+        "manning_n": 0.014,
+        "invert_level_us_m": 8.82,
+        "invert_level_ds_m": 8.48
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
+          [
+            80.232,
+            13.048
+          ],
+          [
+            80.232,
+            13.064
+          ]
+        ]
+      },
+      "properties": {
+        "pipe_id": 44,
+        "diameter_mm": 1200,
+        "length_m": 1768.6,
+        "manning_n": 0.013,
+        "invert_level_us_m": 9.06,
+        "invert_level_ds_m": 8.72
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
+          [
+            80.232,
+            13.064
+          ],
+          [
+            80.232,
+            13.08
+          ]
+        ]
+      },
+      "properties": {
+        "pipe_id": 45,
+        "diameter_mm": 600,
+        "length_m": 1768.6,
+        "manning_n": 0.014,
+        "invert_level_us_m": 9.3,
+        "invert_level_ds_m": 8.96
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
+          [
+            80.248,
+            13.0
+          ],
+          [
+            80.248,
+            13.016
+          ]
+        ]
+      },
+      "properties": {
+        "pipe_id": 46,
+        "diameter_mm": 450,
+        "length_m": 1768.6,
+        "manning_n": 0.014,
+        "invert_level_us_m": 6.14,
+        "invert_level_ds_m": 5.8
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
+          [
+            80.248,
+            13.016
+          ],
+          [
+            80.248,
+            13.032
+          ]
+        ]
+      },
+      "properties": {
+        "pipe_id": 47,
+        "diameter_mm": 900,
+        "length_m": 1768.6,
+        "manning_n": 0.013,
+        "invert_level_us_m": 6.38,
+        "invert_level_ds_m": 6.04
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
+          [
+            80.248,
+            13.032
+          ],
+          [
+            80.248,
+            13.048
+          ]
+        ]
+      },
+      "properties": {
+        "pipe_id": 48,
+        "diameter_mm": 450,
+        "length_m": 1768.6,
+        "manning_n": 0.014,
+        "invert_level_us_m": 6.62,
+        "invert_level_ds_m": 6.28
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
+          [
+            80.248,
+            13.048
+          ],
+          [
+            80.248,
+            13.064
+          ]
+        ]
+      },
+      "properties": {
+        "pipe_id": 49,
+        "diameter_mm": 900,
+        "length_m": 1768.6,
+        "manning_n": 0.013,
+        "invert_level_us_m": 6.86,
+        "invert_level_ds_m": 6.52
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
+          [
+            80.248,
+            13.064
+          ],
+          [
+            80.248,
+            13.08
+          ]
+        ]
+      },
+      "properties": {
+        "pipe_id": 50,
+        "diameter_mm": 450,
+        "length_m": 1768.6,
+        "manning_n": 0.014,
+        "invert_level_us_m": 7.1,
+        "invert_level_ds_m": 6.76
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
+          [
+            80.264,
+            13.0
+          ],
+          [
+            80.264,
+            13.016
+          ]
+        ]
+      },
+      "properties": {
+        "pipe_id": 51,
+        "diameter_mm": 1200,
+        "length_m": 1768.6,
+        "manning_n": 0.013,
+        "invert_level_us_m": 3.94,
+        "invert_level_ds_m": 3.6
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
+          [
+            80.264,
+            13.016
+          ],
+          [
+            80.264,
+            13.032
+          ]
+        ]
+      },
+      "properties": {
+        "pipe_id": 52,
+        "diameter_mm": 600,
+        "length_m": 1768.6,
+        "manning_n": 0.014,
+        "invert_level_us_m": 4.18,
+        "invert_level_ds_m": 3.84
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
+          [
+            80.264,
+            13.032
+          ],
+          [
+            80.264,
+            13.048
+          ]
+        ]
+      },
+      "properties": {
+        "pipe_id": 53,
+        "diameter_mm": 1200,
+        "length_m": 1768.6,
+        "manning_n": 0.013,
+        "invert_level_us_m": 4.42,
+        "invert_level_ds_m": 4.08
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
+          [
+            80.264,
+            13.048
+          ],
+          [
+            80.264,
+            13.064
+          ]
+        ]
+      },
+      "properties": {
+        "pipe_id": 54,
+        "diameter_mm": 600,
+        "length_m": 1768.6,
+        "manning_n": 0.014,
+        "invert_level_us_m": 4.66,
+        "invert_level_ds_m": 4.32
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
+          [
+            80.264,
+            13.064
+          ],
+          [
+            80.264,
+            13.08
+          ]
+        ]
+      },
+      "properties": {
+        "pipe_id": 55,
+        "diameter_mm": 1200,
+        "length_m": 1768.6,
+        "manning_n": 0.013,
+        "invert_level_us_m": 4.9,
+        "invert_level_ds_m": 4.56
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
+          [
+            80.28,
+            13.0
+          ],
+          [
+            80.28,
+            13.016
+          ]
+        ]
+      },
+      "properties": {
+        "pipe_id": 56,
+        "diameter_mm": 900,
+        "length_m": 1768.6,
+        "manning_n": 0.013,
+        "invert_level_us_m": 1.74,
+        "invert_level_ds_m": 1.4
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
+          [
+            80.28,
+            13.016
+          ],
+          [
+            80.28,
+            13.032
+          ]
+        ]
+      },
+      "properties": {
+        "pipe_id": 57,
+        "diameter_mm": 450,
+        "length_m": 1768.6,
+        "manning_n": 0.014,
+        "invert_level_us_m": 1.98,
+        "invert_level_ds_m": 1.64
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
+          [
+            80.28,
+            13.032
+          ],
+          [
+            80.28,
+            13.048
+          ]
+        ]
+      },
+      "properties": {
+        "pipe_id": 58,
+        "diameter_mm": 900,
+        "length_m": 1768.6,
+        "manning_n": 0.013,
+        "invert_level_us_m": 2.22,
+        "invert_level_ds_m": 1.88
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
+          [
+            80.28,
+            13.048
+          ],
+          [
+            80.28,
+            13.064
+          ]
+        ]
+      },
+      "properties": {
+        "pipe_id": 59,
+        "diameter_mm": 450,
+        "length_m": 1768.6,
+        "manning_n": 0.014,
+        "invert_level_us_m": 2.46,
+        "invert_level_ds_m": 2.12
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
+          [
+            80.28,
+            13.064
+          ],
+          [
+            80.28,
+            13.08
+          ]
+        ]
+      },
+      "properties": {
+        "pipe_id": 60,
+        "diameter_mm": 900,
+        "length_m": 1768.6,
+        "manning_n": 0.013,
+        "invert_level_us_m": 2.7,
+        "invert_level_ds_m": 2.36
+      }
+    }
+  ]
+}

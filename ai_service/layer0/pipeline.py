@@ -102,7 +102,7 @@ class Layer0Pipeline:
           Layer0Result instance containing structured DataFrame and diagnostics.
         """
         t_start = time.perf_counter()
-        event_name = archive_event or scenario or 'michaung'
+        event_name = archive_event or scenario or 'monsoon'
 
         # ----------------------------------------------------------------------
         # 1. Ingestion: Retrieve 3 radar sweeps (T-20m, T-10m, T-0m)
@@ -170,6 +170,11 @@ class Layer0Pipeline:
         vol_errors = self.disaggregator.verify_mass_conservation(df_streets, forecasts, radar_bounds=self.bounds)
         t_disagg = time.perf_counter() - t0
 
+        confidences = {
+            f"T+{h}m": round(float(np.clip(np.exp(-0.0035 * h), 0.40, 0.98)), 3)
+            for h in horizons_min
+        }
+
         total_time = time.perf_counter() - t_start
 
         diagnostics: Dict[str, Any] = {
@@ -180,6 +185,7 @@ class Layer0Pipeline:
                 'nowcasting': t_nowcast * 1000.0,
                 'disaggregation': t_disagg * 1000.0,
             },
+            'confidence_by_horizon': confidences,
             'calibration_diagnostics': calib_diag,
             'mass_conservation_errors_pct': vol_errors,
             'max_mass_error_pct': max(vol_errors.values()) if vol_errors else 0.0,
@@ -203,8 +209,8 @@ def main():
     parser = argparse.ArgumentParser(description="Layer 0: Flat Plane Rainfall Nowcasting Engine (GCC 26085)")
     parser.add_argument('--mode', type=str, choices=['auto', 'live', 'archive'], default='auto',
                         help="Execution mode (default: auto)")
-    parser.add_argument('--scenario', type=str, default='michaung',
-                        help="Historical scenario name (michaung, 2015_flood, monsoon, dry)")
+    parser.add_argument('--scenario', type=str, default='monsoon',
+                        help="Historical scenario name (monsoon, michaung, 2015_flood, dry)")
     parser.add_argument('--output', type=str, default=None,
                         help="Optional CSV output path for 7,894 street rain rates")
     args = parser.parse_args()

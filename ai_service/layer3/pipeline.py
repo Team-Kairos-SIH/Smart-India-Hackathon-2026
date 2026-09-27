@@ -81,7 +81,7 @@ class Layer3Pipeline:
 
     def run(
         self,
-        scenario: str = "michaung",
+        scenario: str = "monsoon",
         clogging_factor: float = 0.35,
         storm_scale: float = 1.0,
         layer1_runoff: Optional[Any] = None,
@@ -93,7 +93,7 @@ class Layer3Pipeline:
         Executes end-to-end Layer 3 AI surrogate nowcasting across all 6 horizons.
 
         Parameters:
-          scenario: Historical storm scenario ('michaung', 'monsoon', '2015_flood', 'moderate')
+          scenario: Storm scenario ('monsoon', 'cloudburst', '2015_flood', 'michaung', 'moderate')
           clogging_factor: Solid waste blockage mu_clog in [0.0, 0.85]
           storm_scale: Scaling factor on storm intensity
           layer1_runoff: Optional pre-computed Layer 1 RunoffResult, Layer3Inputs, or DataFrame.
@@ -111,6 +111,15 @@ class Layer3Pipeline:
         source_label = "synthetic"
         l1_obj_for_l2 = layer1_runoff
 
+        scenario_presets = {
+            "2015_flood": 85.0,
+            "michaung": 65.0,
+            "cloudburst": 65.0,
+            "monsoon": 45.0,
+            "moderate": 30.0
+        }
+        base_rain = scenario_presets.get(scenario.lower(), 45.0)
+
         # 1. Check for directly provided Layer 1 runoff inputs
         if layer1_runoff is not None:
             if isinstance(layer1_runoff, Layer3Inputs):
@@ -124,8 +133,7 @@ class Layer3Pipeline:
         # 2. Automatically couple Layer 1 SurfaceRunoffGenerator if available
         elif use_layer1_coupling and SurfaceRunoffGenerator is not None:
             try:
-                base_rain = 85.0 if scenario == "2015_flood" else (65.0 if scenario == "michaung" else 35.0)
-                amc = "AMC_III" if scenario in ("2015_flood", "michaung") else "AMC_II"
+                amc = "AMC_III" if (base_rain >= 60.0 or scenario in ("2015_flood", "michaung")) else "AMC_II"
                 gen = SurfaceRunoffGenerator(base_dir=self.base_dir)
                 roads_df = self.graph.nodes_df.copy()
                 rr = gen.compute_runoff(
@@ -160,7 +168,7 @@ class Layer3Pipeline:
 
             # Baseline storm profile if Layer 0 was not accessible
             if not forcing_vectors:
-                base_rate = 85.0 if scenario == "2015_flood" else (65.0 if scenario == "michaung" else 35.0)
+                base_rate = base_rain
                 for h in HORIZONS_MIN:
                     pulse = 1.0 + 0.3 * np.sin(h / 30.0)
                     forcing_vectors[h] = np.full(n_nodes, base_rate * pulse * storm_scale, dtype=np.float32)
@@ -182,7 +190,6 @@ class Layer3Pipeline:
                 l2_label = "provided_l2"
         elif use_layer2_coupling and Layer2Pipeline is not None:
             try:
-                base_rain = 85.0 if scenario == "2015_flood" else (65.0 if scenario == "michaung" else 35.0)
                 l2_pipe = Layer2Pipeline(base_dir=self.base_dir)
                 l2_res = l2_pipe.run(
                     storm_intensity_mm_hr=base_rain * storm_scale,
@@ -256,8 +263,8 @@ class Layer3Pipeline:
 
 def main():
     parser = argparse.ArgumentParser(description="Layer 3: Physics-Informed AI Surrogate Engine (GCC 26085)")
-    parser.add_argument("--scenario", type=str, default="michaung", choices=["michaung", "2015_flood", "monsoon", "moderate"],
-                        help="Storm event scenario (default: michaung)")
+    parser.add_argument("--scenario", type=str, default="monsoon", choices=["monsoon", "cloudburst", "michaung", "2015_flood", "moderate"],
+                        help="Storm event scenario (default: monsoon)")
     parser.add_argument("--clogging", type=float, default=0.35, help="Dynamic solid waste clogging factor 0.0-0.85 (default: 0.35)")
     parser.add_argument("--output", type=str, default=None, help="Optional CSV output path for 7,894 street depths")
     args = parser.parse_args()

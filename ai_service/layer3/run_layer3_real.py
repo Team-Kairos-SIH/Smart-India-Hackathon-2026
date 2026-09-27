@@ -146,7 +146,7 @@ def run_layer3_real_validation() -> Dict[str, Any]:
     print("Layer 1 slope:          N12E080.hgt / N13E080.hgt -> Central Difference Gradient -> S_0 [m/m]")
     print("Layer 2 drainage:       drainage_network.geojson -> Nearest Spatial Conduit Index -> d_drain [m]")
     print("Layer 2 hydraulic cap:  pipe_attributes.xlsx -> Manning Equation with Bed Slope S_0 -> Q_cap [cumecs]")
-    print("Layer 3 surrogate:      Relational message-passing + KKT mass-balance projection (0.000000% error)")
+    print("Layer 3 surrogate:      Relational message-passing + KKT mass-balance projection (< 0.001% residual via KKT projection)")
 
     print("\n------------------------------------------------------------")
     print("LAYER 1 RUNOFF COUPLING")

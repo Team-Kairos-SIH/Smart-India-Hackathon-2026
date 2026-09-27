@@ -59,7 +59,7 @@ flowchart TD
         S2_PROC["Sentinel2Processor (sentinel2_processor.py)<br>• 10m NDVI & DCIA raster generation<br>• 10x10 km Core Chennai AOI"]
         IMP["ImperviousExtractor (impervious_extractor.py)<br>• Zonal baselines + Road class mods<br>• S2 10m optical blending<br>• RWH disconnection discount (0.94x)<br>• Topographical slope adjustment on C<br>• IRC:SP:42 / CPHEEO Cf factor"]
         SOIL["SoilHydrologyModel (soil_hydrology.py)<br>• USDA/ICAR HSG Groups (A, B, C, D)<br>• Dynamic Antecedent Moisture (AMC-I/II/III)<br>• Coastal water table penalty (0.50x)<br>• Canal riparian penalty (0.40x)<br>• InSAR subsidence compaction (0.85x)"]
-        RUNOFF["SurfaceRunoffGenerator (runoff_generator.py)<br>• Slope-modulated depression storage Sd(S_0)<br>• Net excess surface runoff R_excess [mm/hr]<br>• Tributary inflow discharge Q_surf [m³/s]<br>• Exact 0.000000% volume continuity"]
+        RUNOFF["SurfaceRunoffGenerator (runoff_generator.py)<br>• Slope-modulated depression storage Sd(S_0)<br>• Net excess surface runoff R_excess [mm/hr]<br>• Tributary inflow discharge Q_surf [m³/s]<br>• Analytical volume continuity (< 0.001% residual)"]
 
         S2_PROC --> IMP
         IMP --> RUNOFF
@@ -276,7 +276,7 @@ The Layer 1 test suite is located in [`ai_service/tests/layer1/`](file:///home/y
   ✓ Mean Tributary Discharge:        0.0939 m³/s
   ✓ Max Peak Inflow Discharge:       0.1751 m³/s
   ✓ Catchment Runoff Volume:         2,668,393 m³
-  ✓ Mass Balance Discrepancy:        0.000000% (< 0.01%: PASSED)
+  ✓ Mass Balance Discrepancy:        < 0.001% (< 0.01%: PASSED)
 ```
 
 ---

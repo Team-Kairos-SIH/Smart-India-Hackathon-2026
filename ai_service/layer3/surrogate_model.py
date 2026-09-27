@@ -207,6 +207,10 @@ class PhysicsInformedGraphSurrogate:
         }
 
 
+# Primary technically accurate classes: Topological Graph Convolutional Surrogate with Physical Continuity Loss
+TopologicalGraphSurrogateEngine = PhysicsInformedGraphSurrogate
+HydraulicGraphSurrogateEngine = PhysicsInformedGraphSurrogate
+
 # Backward-compatible alias
 PIGNNSurrogateEngine = PhysicsInformedGraphSurrogate
 

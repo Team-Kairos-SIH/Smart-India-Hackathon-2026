@@ -52,7 +52,7 @@ Applies 2D Discrete Fourier Transform to penalize spectrum discrepancies in high
 For every 10x10 block of 100m sub-cells inside each 1km parent radar pixel:
     gamma_jk = R_1km(j, k) / [ (1/100) * sum_{m,n} R_100m(j, k, m, n) ]
     R_conserved = gamma_jk * R_100m
-Guarantees 0.000000% water volume hallucination.
+Guarantees < 0.001% water volume error (enforced via analytical projection).
 
 ### 3.2 Topographic Drift & Coastal Convergence
 - Orographic Upslope Index: W = V_wind . grad(Z_DEM), boosting rain on windward aspects.
@@ -67,5 +67,5 @@ Guarantees 0.000000% water volume hallucination.
 | **Peak Cloudburst Error (>50 mm/hr)** | -42.8% under-prediction | **-3.1%** bias | Asymmetric Loss (alpha=8.0) eliminates MSE mean smoothing |
 | **Critical Success Index (CSI_50)** | 0.21 | **0.44** (+109% gain) | Differentiable Soft-CSI + FFL preserve convective cores |
 | **False Alarm Ratio (FAR_50)** | 0.48 | **0.23** (-52% reduction) | Multi-Sensor Kalman Fusion eliminates radar clutter/overshoot |
-| **Catchment Water Balance Error** | 14.2% volume loss | **0.000000%** (Strictly Conserved) | Cell-wise discrete mass conservation operator |
+| **Catchment Water Balance Error** | 14.2% volume loss | **< 0.001% (enforced via analytical projection)** | Cell-wise discrete mass conservation operator |
 | **Cycle Latency** | 92 ms | **107 ms** | Gaspari-Cohn localized sparse matrix inversion (<50 ms) |

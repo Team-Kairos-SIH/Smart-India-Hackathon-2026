@@ -9,7 +9,7 @@ Verifies:
   6. Non-broadcasting of 25 benchmark manhole hotspots across the 7,894-node graph.
   7. Physical sparsity: non-surcharging conduits produce zero backflow on connected roads.
   8. Backflow impact on street depth: d(Q_surf + Q_backflow) >= d(Q_surf).
-  9. Analytical volumetric mass conservation with backflow (0.000000% error target).
+  9. Analytical volumetric mass conservation with backflow (< 0.001% analytical projection residual).
   10. Multi-horizon depth monotonicity across T+15m ... T+180m.
   11. Sub-second CPU latency (< 350 ms budget).
   12. attach_layer2_backflow() dataframe enrichment with backflow_rate_m3_s & is_surcharging.
@@ -148,7 +148,7 @@ class TestLayer2Layer3Coupling(unittest.TestCase):
         self.assertGreater(mean_surch_with_bf, mean_surch_no_bf)
 
     def test_07_analytical_mass_conservation_with_backflow(self):
-        """Volumetric continuity with backflow must achieve 0.000000% error target."""
+        """Volumetric continuity with backflow must achieve < 0.001% analytical projection residual."""
         loss_fn = MassConservationConstraint()
         res_coupled = self.surrogate.predict_multi_horizon(
             rain_vectors=self.l3_inputs.runoff_vectors,

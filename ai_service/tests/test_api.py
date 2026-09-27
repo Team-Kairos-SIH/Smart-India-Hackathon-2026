@@ -1,14 +1,9 @@
-import pytest
+import unittest
 import sys
 from unittest.mock import MagicMock, patch
 
-# Mock cv2 (OpenCV) which is required by Layer 0 but not installed in this env
-sys.modules['cv2'] = MagicMock()
-
 from fastapi.testclient import TestClient
 from ai_service.api import app
-
-client = TestClient(app)
 
 # Helper mock for Layer4Service
 def get_mock_service():
@@ -36,170 +31,179 @@ def get_mock_service():
     }
     return mock_service
 
-@pytest.fixture
-def mock_layer4():
-    with patch("ai_service.api.get_layer4_service", return_value=get_mock_service()) as mock:
-        yield mock
 
-# --- POST /route Tests ---
+class TestAPIEndpoints(unittest.TestCase):
+    @classmethod
+    def setUpClass(cls):
+        cls.client = TestClient(app)
 
-def test_route_valid(mock_layer4):
-    # 1. valid route
-    response = client.post(
-        "/route",
-        json={
-            "vehicle_type": "ambulance",
-            "origin": {"latitude": 13.0, "longitude": 80.0},
-            "destination": {"latitude": 13.1, "longitude": 80.1}
+    def setUp(self):
+        self.patcher = patch("ai_service.api.get_layer4_service", return_value=get_mock_service())
+        self.mock_layer4 = self.patcher.start()
+
+    def tearDown(self):
+        self.patcher.stop()
+
+    # --- POST /route Tests ---
+
+    def test_route_valid(self):
+        # 1. valid route
+        response = self.client.post(
+            "/route",
+            json={
+                "vehicle_type": "ambulance",
+                "origin": {"latitude": 13.0, "longitude": 80.0},
+                "destination": {"latitude": 13.1, "longitude": 80.1}
+            }
+        )
+        self.assertEqual(response.status_code, 200)
+        data = response.json()
+        self.assertEqual(data["status"], "SUCCESS")
+        self.assertIn("route_geometry", data)
+
+    def test_route_invalid_vehicle(self):
+        # 2. invalid vehicle (simulate failure in engine)
+        self.mock_layer4.return_value.route.return_value = {
+            "status": "FAILED",
+            "failure_reason": "Invalid vehicle type"
         }
-    )
-    assert response.status_code == 200
-    data = response.json()
-    assert data["status"] == "SUCCESS"
-    assert "route_geometry" in data
+        response = self.client.post(
+            "/route",
+            json={
+                "vehicle_type": "invalid_boat",
+                "origin": {"latitude": 13.0, "longitude": 80.0},
+                "destination": {"latitude": 13.1, "longitude": 80.1}
+            }
+        )
+        self.assertEqual(response.status_code, 400)
+        self.assertIn("invalid vehicle", response.json()["detail"]["failure_reason"].lower())
 
-def test_route_invalid_vehicle(mock_layer4):
-    # 2. invalid vehicle (simulate failure in engine)
-    mock_layer4.return_value.route.return_value = {
-        "status": "FAILED",
-        "failure_reason": "Invalid vehicle type"
-    }
-    response = client.post(
-        "/route",
-        json={
-            "vehicle_type": "invalid_boat",
-            "origin": {"latitude": 13.0, "longitude": 80.0},
-            "destination": {"latitude": 13.1, "longitude": 80.1}
+    def test_route_invalid_coordinates(self):
+        # 3. invalid coordinates
+        response = self.client.post(
+            "/route",
+            json={
+                "vehicle_type": "ambulance",
+                "origin": {"latitude": "invalid", "longitude": 80.0},
+                "destination": {"latitude": 13.1, "longitude": 80.1}
+            }
+        )
+        self.assertEqual(response.status_code, 422)
+
+    def test_route_missing_origin(self):
+        # 4. missing origin
+        response = self.client.post(
+            "/route",
+            json={
+                "vehicle_type": "ambulance",
+                "destination": {"latitude": 13.1, "longitude": 80.1}
+            }
+        )
+        self.assertEqual(response.status_code, 422)
+
+    def test_route_missing_destination(self):
+        # 5. missing destination
+        response = self.client.post(
+            "/route",
+            json={
+                "vehicle_type": "ambulance",
+                "origin": {"latitude": 13.0, "longitude": 80.0}
+            }
+        )
+        self.assertEqual(response.status_code, 422)
+
+    def test_route_invalid_departure_time(self):
+        # 6. invalid departure time
+        response = self.client.post(
+            "/route",
+            json={
+                "vehicle_type": "ambulance",
+                "origin": {"latitude": 13.0, "longitude": 80.0},
+                "destination": {"latitude": 13.1, "longitude": 80.1},
+                "departure_time": "not_a_time"
+            }
+        )
+        self.assertEqual(response.status_code, 422)
+
+    def test_route_blocked_no_route(self):
+        # 7. blocked/no route
+        self.mock_layer4.return_value.route.return_value = {
+            "status": "FAILED",
+            "failure_reason": "no safe route found"
         }
-    )
-    assert response.status_code == 400
-    assert "invalid vehicle" in response.json()["detail"]["failure_reason"].lower()
+        response = self.client.post(
+            "/route",
+            json={
+                "vehicle_type": "ambulance",
+                "origin": {"latitude": 13.0, "longitude": 80.0},
+                "destination": {"latitude": 13.1, "longitude": 80.1}
+            }
+        )
+        self.assertEqual(response.status_code, 404)
+        self.assertIn("no safe route found", response.json()["detail"]["failure_reason"].lower())
 
-def test_route_invalid_coordinates(mock_layer4):
-    # 3. invalid coordinates
-    response = client.post(
-        "/route",
-        json={
-            "vehicle_type": "ambulance",
-            "origin": {"latitude": "invalid", "longitude": 80.0},
-            "destination": {"latitude": 13.1, "longitude": 80.1}
+    def test_route_layer3_unavailable(self):
+        # 8. Layer 3 unavailable/invalid response
+        self.mock_layer4.return_value.route.side_effect = Exception("Layer 3 timeout")
+        response = self.client.post(
+            "/route",
+            json={
+                "vehicle_type": "ambulance",
+                "origin": {"latitude": 13.0, "longitude": 80.0},
+                "destination": {"latitude": 13.1, "longitude": 80.1}
+            }
+        )
+        self.assertEqual(response.status_code, 500)
+        self.assertIn("Layer 3 timeout", response.json()["detail"])
+
+    # --- GET /assets/status Tests ---
+
+    def test_assets_successful(self):
+        # 1. successful response
+        response = self.client.get("/assets/status")
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(response.json()["status"], "SUCCESS")
+
+    def test_assets_all_20_returned(self):
+        # 2. all 20 substations returned
+        response = self.client.get("/assets/status")
+        self.assertEqual(response.json()["total_monitored"], 20)
+        self.assertEqual(len(response.json()["assets"]), 20)
+
+    def test_assets_unknown_plinth_remains_unknown(self):
+        # 3. unknown plinth remains unknown
+        response = self.client.get("/assets/status")
+        assets = response.json()["assets"]
+        self.assertEqual(assets[0]["uncertainty"], "PLINTH_UNKNOWN")
+        self.assertEqual(assets[0]["status"], "UNKNOWN")
+
+    def test_assets_missing_flood_data_not_zero(self):
+        # 4. missing flood data is not treated as zero
+        self.mock_layer4.return_value.get_asset_status.return_value = {
+            "status": "SUCCESS",
+            "total_monitored": 1,
+            "assets": [{
+                "substation_id": "SS-1",
+                "status": "UNKNOWN",
+                "uncertainty": "DATA_UNAVAILABLE",
+                "maximum_site_depth_cm": 0.0
+            }]
         }
-    )
-    # FastAPI/Pydantic returns 422 for unparseable floats
-    assert response.status_code == 422
+        response = self.client.get("/assets/status")
+        asset = response.json()["assets"][0]
+        self.assertEqual(asset["uncertainty"], "DATA_UNAVAILABLE")
+        self.assertEqual(asset["status"], "UNKNOWN")
 
-def test_route_missing_origin(mock_layer4):
-    # 4. missing origin
-    response = client.post(
-        "/route",
-        json={
-            "vehicle_type": "ambulance",
-            "destination": {"latitude": 13.1, "longitude": 80.1}
+    def test_assets_monitor_failure(self):
+        # 5. monitor failure is handled correctly
+        self.mock_layer4.return_value.get_asset_status.return_value = {
+            "status": "FAILED",
+            "error": "Asset DB offline"
         }
-    )
-    assert response.status_code == 422
-
-def test_route_missing_destination(mock_layer4):
-    # 5. missing destination
-    response = client.post(
-        "/route",
-        json={
-            "vehicle_type": "ambulance",
-            "origin": {"latitude": 13.0, "longitude": 80.0}
-        }
-    )
-    assert response.status_code == 422
-
-def test_route_invalid_departure_time(mock_layer4):
-    # 6. invalid departure time
-    response = client.post(
-        "/route",
-        json={
-            "vehicle_type": "ambulance",
-            "origin": {"latitude": 13.0, "longitude": 80.0},
-            "destination": {"latitude": 13.1, "longitude": 80.1},
-            "departure_time": "not_a_time"
-        }
-    )
-    assert response.status_code == 422
-
-def test_route_blocked_no_route(mock_layer4):
-    # 7. blocked/no route
-    mock_layer4.return_value.route.return_value = {
-        "status": "FAILED",
-        "failure_reason": "no safe route found"
-    }
-    response = client.post(
-        "/route",
-        json={
-            "vehicle_type": "ambulance",
-            "origin": {"latitude": 13.0, "longitude": 80.0},
-            "destination": {"latitude": 13.1, "longitude": 80.1}
-        }
-    )
-    assert response.status_code == 404
-    assert "no safe route found" in response.json()["detail"]["failure_reason"].lower()
-
-def test_route_layer3_unavailable(mock_layer4):
-    # 8. Layer 3 unavailable/invalid response
-    mock_layer4.return_value.route.side_effect = Exception("Layer 3 timeout")
-    response = client.post(
-        "/route",
-        json={
-            "vehicle_type": "ambulance",
-            "origin": {"latitude": 13.0, "longitude": 80.0},
-            "destination": {"latitude": 13.1, "longitude": 80.1}
-        }
-    )
-    assert response.status_code == 500
-    assert "Layer 3 timeout" in response.json()["detail"]
+        response = self.client.get("/assets/status")
+        self.assertEqual(response.status_code, 500)
+        self.assertIn("Asset DB offline", response.json()["detail"])
 
 
-# --- GET /assets/status Tests ---
-
-def test_assets_successful(mock_layer4):
-    # 1. successful response
-    response = client.get("/assets/status")
-    assert response.status_code == 200
-    assert response.json()["status"] == "SUCCESS"
-
-def test_assets_all_20_returned(mock_layer4):
-    # 2. all 20 substations returned
-    response = client.get("/assets/status")
-    assert response.json()["total_monitored"] == 20
-    assert len(response.json()["assets"]) == 20
-
-def test_assets_unknown_plinth_remains_unknown(mock_layer4):
-    # 3. unknown plinth remains unknown
-    response = client.get("/assets/status")
-    assets = response.json()["assets"]
-    # We mocked them all to be PLINTH_UNKNOWN
-    assert assets[0]["uncertainty"] == "PLINTH_UNKNOWN"
-    assert assets[0]["status"] == "UNKNOWN"
-
-def test_assets_missing_flood_data_not_zero(mock_layer4):
-    # 4. missing flood data is not treated as zero
-    mock_layer4.return_value.get_asset_status.return_value = {
-        "status": "SUCCESS",
-        "total_monitored": 1,
-        "assets": [{
-            "substation_id": "SS-1",
-            "status": "UNKNOWN",
-            "uncertainty": "DATA_UNAVAILABLE",
-            "maximum_site_depth_cm": 0.0
-        }]
-    }
-    response = client.get("/assets/status")
-    asset = response.json()["assets"][0]
-    assert asset["uncertainty"] == "DATA_UNAVAILABLE"
-    assert asset["status"] == "UNKNOWN"
-
-def test_assets_monitor_failure(mock_layer4):
-    # 5. monitor failure is handled correctly
-    mock_layer4.return_value.get_asset_status.return_value = {
-        "status": "FAILED",
-        "error": "Asset DB offline"
-    }
-    response = client.get("/assets/status")
-    assert response.status_code == 500
-    assert "Asset DB offline" in response.json()["detail"]
+if __name__ == "__main__":
+    unittest.main()

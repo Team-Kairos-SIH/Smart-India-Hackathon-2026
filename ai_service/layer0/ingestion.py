@@ -216,7 +216,7 @@ class IMDRadarIngestion:
         return None
 
     def fetch_latest_radar(self, product: str = 'sri', station: str = 'Chennai',
-                           fallback_scenario: str = 'michaung',
+                           fallback_scenario: str = 'monsoon',
                            allow_clear_air: bool = False) -> RadarSweep:
         """Fetch latest live radar sweep or seamlessly fallback to archive if unavailable."""
         gif_bytes = self.fetch_live_gif(product=product)
@@ -487,7 +487,7 @@ class HistoricalArchiveLoader:
             if tmp_name and os.path.exists(tmp_name):
                 os.remove(tmp_name)
 
-    def generate_scenario_sweep(self, scenario: str = 'michaung',
+    def generate_scenario_sweep(self, scenario: str = 'monsoon',
                                 sweep_offset_min: int = 0,
                                 target_bounds: Tuple[float, float, float, float] = DEFAULT_CHENNAI_BOUNDS,
                                 target_shape: Tuple[int, int] = DEFAULT_GRID_SHAPE) -> RadarSweep:
@@ -538,7 +538,7 @@ class HistoricalArchiveLoader:
             metadata={'scenario': scenario, 'sweep_offset_min': sweep_offset_min},
         )
 
-    def load_three_sweeps(self, scenario: str = 'michaung',
+    def load_three_sweeps(self, scenario: str = 'monsoon',
                           target_bounds: Tuple[float, float, float, float] = DEFAULT_CHENNAI_BOUNDS,
                           target_shape: Tuple[int, int] = DEFAULT_GRID_SHAPE) -> List[RadarSweep]:
         """Generate 3 consecutive radar sweeps at T-20m, T-10m, and T-0m for optical flow nowcasting."""
@@ -555,7 +555,7 @@ def load_radar_sweep(mode: str = 'auto',
                      shape: Tuple[int, int] = DEFAULT_GRID_SHAPE) -> RadarSweep:
     """Unified top-level ingestion function with seamless offline fallback."""
     archive_loader = HistoricalArchiveLoader()
-    chosen_scenario = scenario or 'michaung'
+    chosen_scenario = scenario or 'monsoon'
 
     if mode in ('live', 'auto'):
         radar_worker = IMDRadarIngestion(request_timeout=3.0)

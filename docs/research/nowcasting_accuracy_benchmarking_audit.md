@@ -86,7 +86,7 @@ Studies by Overeem et al. (Wageningen), Chwala et al. (KIT), and Messer et al. (
 | **Nearest Neighbor** | 0.32 | 100% (Pixelated blocks) | 0.0% |
 | **Bilinear Interpolation** | 0.38 | 68% (Extreme peaks smoothed out) | 8.4% |
 | **Bicubic Spline Interpolation** | 0.44 | 74% (Overshoots & oscillations) | 12.6% |
-| **Physics-Informed Mass-Conserving Downscaler (Ours)** | **0.76** | **96.8% (Preserves cloudburst cores)** | **0.000000% (Strictly Conserved)** |
+| **Physics-Informed Mass-Conserving Downscaler (Ours)** | **0.76** | **96.8% (Preserves cloudburst cores)** | **< 0.001% (Analytical Volume Conservation)** |
 
 ---
 

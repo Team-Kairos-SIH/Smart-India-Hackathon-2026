@@ -6,7 +6,7 @@ Verifies:
   3. Layer3Inputs structure across all six forecast horizons (T+15m ... T+180m).
   4. Physical validity of runoff rates and tributary discharge (no NaN, non-negative).
   5. Bypassing of crude 90% runoff coefficient when is_runoff_preprocessed=True.
-  6. Analytical volumetric mass conservation (<= 0.0001% tolerance, 0.000000% target).
+  6. Analytical volumetric mass conservation (<= 0.0001% tolerance, < 0.001% analytical projection residual).
   7. Sub-second CPU inference latency budget (< 350 ms, < 30 ms typical).
   8. Multi-horizon inundation depth monotonicity and bounds.
   9. Error detection on mismatched segment counts or scrambled segment IDs.

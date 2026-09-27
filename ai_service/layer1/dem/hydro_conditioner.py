@@ -12,7 +12,12 @@ from pathlib import Path
 from typing import Any, Dict, Optional, Tuple
 
 import numpy as np
-import geopandas as gpd
+try:
+    import geopandas as gpd
+    HAS_GEOPANDAS = True
+except ImportError:
+    gpd = None
+    HAS_GEOPANDAS = False
 import rasterio
 from rasterio.features import rasterize
 
@@ -103,8 +108,15 @@ class HydroConditioner:
         # Drainage canals
         try:
             drain_geojson = find_or_extract_file(self.base_dir, "drainage network.geojson", zip_drainage)
-            gdf_drain = gpd.read_file(drain_geojson).to_crs(crs)
-            shapes = ((geom, c_depth) for geom in gdf_drain.geometry if geom is not None and not geom.is_empty)
+            if HAS_GEOPANDAS and gpd is not None:
+                gdf_drain = gpd.read_file(drain_geojson).to_crs(crs)
+                shapes = ((geom, c_depth) for geom in gdf_drain.geometry if geom is not None and not geom.is_empty)
+            else:
+                import json
+                from shapely.geometry import shape
+                with open(drain_geojson, "r", encoding="utf-8") as f:
+                    ddata = json.load(f)
+                shapes = ((shape(feat["geometry"]), c_depth) for feat in ddata.get("features", []) if feat.get("geometry"))
             burn_mask = rasterize(shapes=shapes, out_shape=(h, w), transform=transform, fill=0.0, dtype=np.float32)
             dem = np.maximum(0.0, dem - burn_mask)
         except Exception as e:
@@ -113,9 +125,16 @@ class HydroConditioner:
         # Underpasses
         try:
             up_geojson = find_or_extract_file(self.base_dir, "underpasses data.geojson", zip_drainage)
-            gdf_up = gpd.read_file(up_geojson).to_crs(crs)
-            up_buffers = [geom.buffer(30.0) for geom in gdf_up.geometry if geom is not None and not geom.is_empty]
-            shapes_up = ((geom, u_depth) for geom in up_buffers)
+            if HAS_GEOPANDAS and gpd is not None:
+                gdf_up = gpd.read_file(up_geojson).to_crs(crs)
+                up_buffers = [geom.buffer(30.0) for geom in gdf_up.geometry if geom is not None and not geom.is_empty]
+            else:
+                import json
+                from shapely.geometry import shape
+                with open(up_geojson, "r", encoding="utf-8") as f:
+                    updata = json.load(f)
+                up_buffers = [shape(feat["geometry"]).buffer(0.0003) for feat in updata.get("features", []) if feat.get("geometry")]
+            shapes_up = ((geom, u_depth) for geom in up_buffers if geom is not None and not geom.is_empty)
             up_mask = rasterize(shapes=shapes_up, out_shape=(h, w), transform=transform, fill=0.0, dtype=np.float32)
             dem = np.maximum(0.0, dem - up_mask)
         except Exception as e:

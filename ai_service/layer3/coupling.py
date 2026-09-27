@@ -320,7 +320,7 @@ def from_layer2_backflow(
 
         # For any surcharging conduit whose ID is not directly in drain_counts,
         # map its backflow to the geographically nearest road node to guarantee
-        # 100.000000% domain-wide volume conservation.
+        # < 0.001% residual domain-wide volume conservation error.
         unconnected_conduits = 0
         road_lats = l3_df["latitude"].values
         road_lons = l3_df["longitude"].values

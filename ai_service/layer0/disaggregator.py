@@ -5,7 +5,7 @@ road segments using area-weighted bicubic interpolation.
 Enforces cell-wise mass conservation scaling factor:
     gamma_jk = (R_jk * sum(a_i)) / (sum(R_tilde_i * a_i))
 Guarantees numerical volume conservation:
-    | V_street - V_radar | / V_radar <= 0.001 (benchmarked 0.000000%).
+    | V_street - V_radar | / V_radar <= 0.001 (benchmarked < 0.001%).
 Outputs structured timeseries matrix of rain rates I_i(t) [mm/hr] and 10-min depths d_i(t) [mm].
 """
 
