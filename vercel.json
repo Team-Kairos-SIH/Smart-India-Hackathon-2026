@@ -1,44 +1,7 @@
 {
-  "$schema": "https://openapi.vercel.sh/vercel.json",
-  "services": {
-    "frontend": {
-      "root": "Frontend",
-      "framework": "vite",
-      "installCommand": "npm install",
-      "buildCommand": "npx vite build"
-    },
-    "backend": {
-      "root": "backend",
-      "framework": "express",
-      "entrypoint": "server.js",
-      "bindings": [
-        {
-          "type": "service",
-          "service": "ai_service",
-          "format": "url",
-          "env": "AI_SERVICE_URL"
-        }
-      ]
-    },
-    "ai_service": {
-      "root": "ai_service",
-      "framework": "fastapi",
-      "entrypoint": "api.py",
-      "installCommand": "pip install -r requirements.txt"
-    }
-  },
-  "rewrites": [
-    {
-      "source": "/api/(.*)",
-      "destination": {
-        "service": "backend"
-      }
-    },
-    {
-      "source": "/(.*)",
-      "destination": {
-        "service": "frontend"
-      }
-    }
-  ]
+  "version": 2,
+  "framework": "vite",
+  "buildCommand": "cd Frontend && npm install && npm run build",
+  "outputDirectory": "Frontend/dist",
+  "cleanUrls": true
 }
