@@ -76,3 +76,4 @@ npm-debug.log
 # Database
 *.sqlite
 *.db
+.vercel
