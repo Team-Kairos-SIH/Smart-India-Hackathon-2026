@@ -9,7 +9,8 @@ const http = require('http');
 // Helper to query Python AI microservice if active
 function queryPythonAI(scenario, mode, clogging) {
   return new Promise((resolve, reject) => {
-    const url = `http://127.0.0.1:8000/api/nowcast?scenario=${encodeURIComponent(scenario)}&mode=${encodeURIComponent(mode)}&clogging=${encodeURIComponent(clogging)}`;
+    const aiServiceBase = process.env.AI_SERVICE_URL || 'http://127.0.0.1:8000';
+    const url = `${aiServiceBase.replace(/\/$/, '')}/api/nowcast?scenario=${encodeURIComponent(scenario)}&mode=${encodeURIComponent(mode)}&clogging=${encodeURIComponent(clogging)}`;
     const req = http.get(url, { timeout: 1500 }, (res) => {
       if (res.statusCode !== 200) {
         return reject(new Error(`AI Service returned ${res.statusCode}`));

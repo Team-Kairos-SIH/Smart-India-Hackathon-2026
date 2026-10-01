@@ -43,7 +43,9 @@ app.get('/', (req, res) => {
 // Helper to fetch live simulation telemetry from Python AI microservice (Layer 0)
 function queryPythonTelemetry() {
   return new Promise((resolve) => {
-    const req = http.get('http://127.0.0.1:8000/api/health', { timeout: 1200 }, (res) => {
+    const aiServiceBase = process.env.AI_SERVICE_URL || 'http://127.0.0.1:8000';
+    const targetUrl = `${aiServiceBase.replace(/\/$/, '')}/api/health`;
+    const req = http.get(targetUrl, { timeout: 1200 }, (res) => {
       if (res.statusCode !== 200) return resolve(null);
       let data = '';
       res.on('data', chunk => { data += chunk; });

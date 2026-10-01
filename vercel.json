@@ -1,16 +1,41 @@
 {
-  "name": "team-kairos-sih",
-  "version": 2,
-  "builds": [
-    {
-      "src": "frontend/index.html",
-      "use": "@vercel/static"
+  "$schema": "https://openapi.vercel.sh/vercel.json",
+  "services": {
+    "frontend": {
+      "root": "frontend",
+      "framework": "vite"
+    },
+    "backend": {
+      "root": "backend",
+      "framework": "express",
+      "entrypoint": "server.js",
+      "bindings": [
+        {
+          "type": "service",
+          "service": "ai_service",
+          "format": "url",
+          "env": "AI_SERVICE_URL"
+        }
+      ]
+    },
+    "ai_service": {
+      "root": "ai_service",
+      "framework": "fastapi",
+      "entrypoint": "api.py"
     }
-  ],
-  "routes": [
+  },
+  "rewrites": [
     {
-      "src": "/(.*)",
-      "dest": "/frontend/$1"
+      "source": "/api/(.*)",
+      "destination": {
+        "service": "backend"
+      }
+    },
+    {
+      "source": "/(.*)",
+      "destination": {
+        "service": "frontend"
+      }
     }
   ]
 }
