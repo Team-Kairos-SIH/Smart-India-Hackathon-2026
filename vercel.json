@@ -23,7 +23,8 @@
     "ai_service": {
       "root": "ai_service",
       "framework": "fastapi",
-      "entrypoint": "api.py"
+      "entrypoint": "api.py",
+      "installCommand": "pip install -r requirements.txt"
     }
   },
   "rewrites": [
