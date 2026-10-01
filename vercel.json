@@ -2,8 +2,10 @@
   "$schema": "https://openapi.vercel.sh/vercel.json",
   "services": {
     "frontend": {
-      "root": "frontend",
-      "framework": "vite"
+      "root": "Frontend",
+      "framework": "vite",
+      "installCommand": "npm install",
+      "buildCommand": "npx vite build"
     },
     "backend": {
       "root": "backend",
